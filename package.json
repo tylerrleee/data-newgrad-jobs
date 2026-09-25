@@ -4,7 +4,10 @@
   "type": "module",
   "scripts": {
     "start": "bun src/index.ts",
+    "watch": "bun src/index.ts --watch",
+    "dry-run": "bun src/index.ts --dry-run",
     "sample": "bun src/post-sample.ts",
+    "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -1,0 +1,473 @@
+y",
+        "category": "AI/ML/Data",
+        "company_name": "PathAI",
+        "id": "e893c8a9-6a16-4e98-b3e6-3ef4b5b81b50",
+        "title": "Machine Learning Intern/Co-op",
+        "active": true,
+        "terms": [
+            "Fall 2026",
+            "Winter 2027"
+        ],
+        "date_updated": 1790288281,
+        "date_posted": 1790288125,
+        "url": "https://www.pathai.com/careers/8843495002?gh_jid=8843495002",
+        "locations": [
+            "Boston, MA",
+            "Remote in USA",
+            "NYC"
+        ],
+        "company_url": "https://simplify.jobs/c/PathAI",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Master's",
+            "PhD"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Hardware",
+        "company_name": "iRhythm Technologies",
+        "id": "33fee74b-b1b5-410a-8477-e050b2b8614c",
+        "title": "Lifecycle Engineering Co-op Intern",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790289268,
+        "date_posted": 1790208000,
+        "url": "https://irhythmtech.wd5.myworkdayjobs.com/irhythm/job/Orange-County-CA/Lifecycle-Engineering-Co-Op-Full-Time-Intern-Jan-June-2027_JR1784-1",
+        "locations": [
+            "Orange County, CA"
+        ],
+        "company_url": "https://simplify.jobs/c/IRhythm-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's",
+            "Master's",
+            "PhD"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Product",
+        "company_name": "Tradeweb",
+        "id": "fadc5395-c7d9-4c74-8a5d-4dff2d7fa71c",
+        "title": "Market Data Product Management Intern",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790289165,
+        "date_posted": 1790288051,
+        "url": "https://ecnf.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/301932",
+        "locations": [
+            "NYC"
+        ],
+        "company_url": "https://simplify.jobs/c/Tradeweb",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Quant",
+        "company_name": "Tradeweb",
+        "id": "65953c6c-4e10-43b0-bebf-f1a326199c76",
+        "title": "Quantitative Intern",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790289174,
+        "date_posted": 1790288051,
+        "url": "https://ecnf.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/301931",
+        "locations": [
+            "NYC"
+        ],
+        "company_url": "https://simplify.jobs/c/Tradeweb",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's",
+            "Master's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "544076ef-ca22-485c-8793-4770c7d30023",
+        "title": "Software Engineer Intern",
+        "active": true,
+        "terms": [
+            "Spring 2027",
+            "Summer 2027"
+        ],
+        "date_updated": 1790289154,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Dayton-Office/Software-Engineer-Intern-Spring-Summer-2027_HR102442",
+        "locations": [
+            "Dayton, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "AI/ML/Data",
+        "company_name": "Texas A&M University System",
+        "id": "d46a978e-6fec-4693-a889-1a07521469e0",
+        "title": "Graduate Assistant - Accreditation and Quality Improvement",
+        "active": true,
+        "terms": [
+            "N/A"
+        ],
+        "date_updated": 1790288281,
+        "date_posted": 1790208000,
+        "url": "https://tamus.wd1.myworkdayjobs.com/System-wide_External/job/Prairie-View-TX/Graduate-Assistant---Non-Teaching----Accreditation-and-Quality-Improvement_R-097442-2",
+        "locations": [
+            "Prairie View, TX"
+        ],
+        "company_url": "https://simplify.jobs/c/Texas-AM-University-System",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Hardware",
+        "company_name": "Acuity",
+        "id": "9861557d-858b-485b-a94e-ae1705e8c149",
+        "title": "Hardware Development Intern - Hardware",
+        "active": true,
+        "terms": [
+            "N/A"
+        ],
+        "date_updated": 1790289088,
+        "date_posted": 1790287974,
+        "url": "https://careers.acuityinc.com/job/Brossard-Stagiaire-d%C3%A9veloppement-mat%C3%A9riel-(hardware)-Qu%C3%A9b-J4Y-0C4/1433678100/?ats=successfactors",
+        "locations": [
+            "Brossard, QC, Canada"
+        ],
+        "company_url": "https://simplify.jobs/c/Acuity",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Product",
+        "company_name": "ABB",
+        "id": "a2e915b7-cd1b-4137-9c87-a2707b3de604",
+        "title": "Product Management Intern",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790288281,
+        "date_posted": 1790208000,
+        "url": "https://abb.wd3.myworkdayjobs.com/external_career_page/job/New-Berlin-Wisconsin-United-States-of-America/Product-Management-Intern---Summer-2027_JR00047280",
+        "locations": [
+            "New Berlin, WI"
+        ],
+        "company_url": "https://simplify.jobs/c/ABB",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "6aab9099-e210-40cb-8088-d27b253dd0a7",
+        "title": "Modeling Engineer Intern - Analytics, Simulation Sciences, Mass",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790289071,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Beavercreek-OH/XMLNAME-2027-Modeling--Analytics----Simulation-Sciences--MASS--Engineer-Intern_HR102440-1",
+        "locations": [
+            "Beavercreek, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "7cff5b3d-c314-4456-ae2f-2dc4125f5ecf",
+        "title": "Modeling Engineer Intern - Analytics - Simulation Sciences",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790289067,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Beavercreek-OH/XMLNAME-2027-Modeling--Analytics----Simulation-Sciences--MASS--Engineer-Intern_HR102439",
+        "locations": [
+            "Beavercreek, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "2447c030-f0b3-45ba-8dd4-df6ca2b82259",
+        "title": "Modeling Engineer Intern - Analytics and Simulation Sciences",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790289073,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Beavercreek-OH/XMLNAME-2027-Modeling--Analytics----Simulation-Sciences--MASS--Engineer-Intern_HR102438",
+        "locations": [
+            "Beavercreek, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "a85254d2-8066-44f1-94d3-904c02e8c5f3",
+        "title": "Modeling Engineer Intern - Analytics, Simulation Sciences, Mass",
+        "active": true,
+        "terms": [
+            "Winter 2026"
+        ],
+        "date_updated": 1790289063,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Beavercreek-OH/XMLNAME-2027-Modeling--Analytics----Simulation-Sciences--MASS--Engineer-Intern_HR102437",
+        "locations": [
+            "Beavercreek, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "9a22b713-73b1-4482-866d-cf1543e650e4",
+        "title": "Software Engineer Intern",
+        "active": true,
+        "terms": [
+            "Spring 2027",
+            "Summer 2027"
+        ],
+        "date_updated": 1790289052,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Dayton-Office/Software-Engineer-Intern-Spring-Summer-2027_HR102445",
+        "locations": [
+            "Dayton, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "GoTo Group",
+        "id": "7471b8b6-f1d5-4c2b-88f7-47f118d9cc04",
+        "title": "Software Engineer Intern - C3PO",
+        "active": true,
+        "terms": [
+            "Winter 2026"
+        ],
+        "date_updated": 1790289018,
+        "date_posted": 1790208000,
+        "url": "https://goto.wd5.myworkdayjobs.com/GoToCareers/job/Remote-Canada/C3PO-Intern_R26-2245",
+        "locations": [
+            "Remote in Canada"
+        ],
+        "company_url": "https://simplify.jobs/c/GoTo-Group",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "9533e1df-ae69-41b8-90cc-a9c76dae5b88",
+        "title": "Software Engineer Intern",
+        "active": true,
+        "terms": [
+            "Spring 2027",
+            "Summer 2027"
+        ],
+        "date_updated": 1790289049,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Dayton-Office/Software-Engineer-Intern-Spring-Summer-2027_HR102446",
+        "locations": [
+            "Dayton, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Hardware",
+        "company_name": "Marvell",
+        "id": "6f7bf192-fce8-4fd8-b5b2-80bea38e4c1e",
+        "title": "Data Center Silicon Hardware Engineering Intern Co-op - BS",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790289059,
+        "date_posted": 1790208000,
+        "url": "https://marvell.wd1.myworkdayjobs.com/MarvellCareers/job/Ottawa-Canada/Data-Center-Silicon-Hardware-Engineering-Intern---BS---2027-Co-Op_2604525",
+        "locations": [
+            "Toronto, ON, Canada",
+            "Ottawa, ON, Canada"
+        ],
+        "company_url": "https://simplify.jobs/c/Marvell",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "5a520635-ec7f-4867-add0-a06b434d8203",
+        "title": "Software Engineer Intern",
+        "active": true,
+        "terms": [
+            "Spring 2027",
+            "Summer 2027"
+        ],
+        "date_updated": 1790289052,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Dayton-Office/Software-Engineer-Intern-Spring-Summer-2027_HR102443",
+        "locations": [
+            "Dayton, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "20e60473-ab0b-483d-8db0-683b9665e97c",
+        "title": "Modeling Engineer Intern - Analytics & Simulation Sciences - Mass",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790289062,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Beavercreek-OH/Modeling--Analytics----Simulation-Sciences--MASS--Engineer-Intern_HR102436",
+        "locations": [
+            "Beavercreek, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "b651ebc4-6d28-49c4-86b6-85437f9cd16a",
+        "title": "Software Engineer Intern",
+        "active": true,
+        "terms": [
+            "Spring 2027",
+            "Summer 2027"
+        ],
+        "date_updated": 1790289041,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Dayton-Office/Software-Engineer-Intern-Spring-Summer-2027_HR102444",
+        "locations": [
+            "Dayton, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    },
+    {
+        "source": "Simplify",
+        "category": "Software",
+        "company_name": "Radiance Technologies",
+        "id": "140fab22-0b1d-498c-a250-8373856250d9",
+        "title": "Modeling Engineer Intern - Analytics, Simulation Sciences, Mass",
+        "active": true,
+        "terms": [
+            "Summer 2027"
+        ],
+        "date_updated": 1790289064,
+        "date_posted": 1790208000,
+        "url": "https://radiancetech.wd12.myworkdayjobs.com/Radiance_External/job/Beavercreek-OH/XMLNAME-2027-Modeling--Analytics----Simulation-Sciences--MASS--Engineer-Intern_HR102441",
+        "locations": [
+            "Beavercreek, OH"
+        ],
+        "company_url": "https://simplify.jobs/c/Radiance-Technologies",
+        "is_visible": true,
+        "sponsorship": "Other",
+        "degrees": [
+            "Bachelor's"
+        ]
+    }
+]

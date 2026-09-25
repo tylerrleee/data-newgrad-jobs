@@ -1,13 +1,14 @@
-// Posts a made-up job to check the Slack setup. Doesn't record it as seen.
-import { config } from "./config.ts";
-import { createSlackClient, postJob } from "./slack.ts";
+// Posts a made-up job to check the Slack setup. Doesn't touch the database.
+import { slackConfig } from "./config.ts";
+import { createSlackPoster } from "./slack.ts";
 
-const slack = createSlackClient(config.slackBotToken);
-await postJob(slack, config.slackChannelId, {
-  id: "sample",
-  title: "Sample Software Engineer",
+const { token, channel } = slackConfig();
+await createSlackPoster(token, channel).post({
+  title: "Sample Software Engineer Intern",
   company: "Jobbo Test Co.",
-  location: "Remote",
-  url: "https://example.com/jobs/sample",
+  url: "https://example.com/jobs/sample?team=a&level=intern",
+  locations: ["Remote"],
+  sources: ["Simplify"],
+  moreInThread: 0,
 });
-console.log(`Posted a sample job to ${config.slackChannelId}`);
+console.log(`Posted a sample job to ${channel}`);

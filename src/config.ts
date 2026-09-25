@@ -1,3 +1,5 @@
+import { isDay } from "./dates.ts";
+
 function required(name: string): string {
   const value = Bun.env[name];
   if (!value) {
@@ -6,8 +8,33 @@ function required(name: string): string {
   return value;
 }
 
+function optionalCount(name: string, fallback: number): number {
+  const value = Bun.env[name];
+  if (!value) return fallback;
+  const count = Number(value);
+  if (!Number.isInteger(count) || count < 0) throw new Error(`${name} must be a whole number, got "${value}"`);
+  return count;
+}
+
+function optionalDay(name: string): string | undefined {
+  const value = Bun.env[name];
+  if (!value) return undefined;
+  if (!isDay(value)) throw new Error(`${name} must be a date like 2026-09-24, got "${value}"`);
+  return value;
+}
+
 export const config = {
-  slackBotToken: required("SLACK_BOT_TOKEN"),
-  slackChannelId: required("SLACK_CHANNEL_ID"),
   dbPath: Bun.env.JOBBO_DB_PATH ?? "jobbo.sqlite",
+  maxPostsPerRun: optionalCount("JOBBO_MAX_POSTS_PER_RUN", 40),
+  postSince: optionalDay("JOBBO_POST_SINCE"),
+  /** Log lines are also appended here; set JOBBO_LOG_FILE= (empty) to log to the terminal only. */
+  logFile: Bun.env.JOBBO_LOG_FILE ?? "jobbo.log",
 };
+
+/** Slack settings are only needed when actually posting. */
+export function slackConfig() {
+  return {
+    token: required("SLACK_BOT_TOKEN"),
+    channel: required("SLACK_CHANNEL_ID"),
+  };
+}
