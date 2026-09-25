@@ -17,21 +17,20 @@ function text(message: typeof base): string {
 }
 
 describe("renderJob", () => {
-  test("title link, company and locations, sources", () => {
+  test("bold company, title link and locations on their own lines, no sources", () => {
     expect(text(base)).toBe(
-      "*<https://careers.example.com/job?id=1&amp;team=a|Software Developer Intern>*\n" +
-        "Booz Allen · McLean, VA\n" +
-        "Sources: Simplify, speedyapply",
+      "*Booz Allen*\n" + "<https://careers.example.com/job?id=1&amp;team=a|Software Developer Intern>\n" + "McLean, VA",
     );
     expect(renderJob(base).text).toBe("Software Developer Intern at Booz Allen");
+    expect(renderJob(base).blocks.map((block) => block.type)).toEqual(["section", "divider"]);
   });
 
   test("shows three locations and counts the rest", () => {
     const locations = ["McLean, VA", "Annapolis Junction, MD", "Remote", "Denver, CO", "Austin, TX"];
-    expect(text({ ...base, locations }).split("\n")[1]).toBe(
-      "Booz Allen · McLean, VA; Annapolis Junction, MD; Remote +2 more",
+    expect(text({ ...base, locations }).split("\n")[2]).toBe(
+      "McLean, VA; Annapolis Junction, MD; Remote +2 more",
     );
-    expect(text({ ...base, locations: [] }).split("\n")[1]).toBe("Booz Allen");
+    expect(text({ ...base, locations: [] }).split("\n")).toHaveLength(2);
   });
 
   test("thread counts", () => {
@@ -41,7 +40,7 @@ describe("renderJob", () => {
 
   test("escapes mrkdwn control characters", () => {
     const rendered = text({ ...base, title: "R&D <Intern> | Data", url: "https://x.example/a|b" });
-    expect(rendered.split("\n")[0]).toBe("*<https://x.example/a%7Cb|R&amp;D &lt;Intern&gt; | Data>*");
+    expect(rendered.split("\n")[1]).toBe("<https://x.example/a%7Cb|R&amp;D &lt;Intern&gt; | Data>");
   });
 
   test("truncates very long titles", () => {

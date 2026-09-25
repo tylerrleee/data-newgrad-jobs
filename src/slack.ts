@@ -6,7 +6,7 @@ export interface JobMessage {
   company: string;
   url: string;
   locations: string[];
-  /** Source labels, e.g. "Simplify". */
+  /** Source labels, e.g. "Simplify". Not shown in Slack. */
   sources: string[];
   moreInThread: number;
 }
@@ -78,18 +78,17 @@ export function renderJob(message: JobMessage): { text: string; blocks: KnownBlo
   const shown = message.locations.slice(0, SHOWN_LOCATIONS).map((location) => truncate(location, MAX_LOCATION));
   const hidden = message.locations.length - shown.length;
   const locations = escapeMrkdwn(shown.join("; ")) + (hidden > 0 ? ` +${hidden} more` : "");
-  const lines = [
-    `*<${url}|${title}>*`,
-    locations ? `${company} · ${locations}` : company,
-    `Sources: ${message.sources.join(", ")}`,
-  ];
+  // Sources are left out of the post; the dry-run log still shows them.
+  const lines = [`*${company}*`, `<${url}|${title}>`];
+  if (locations) lines.push(locations);
   if (message.moreInThread > 0) {
     lines.push(`└ ${message.moreInThread} more opening${message.moreInThread === 1 ? "" : "s"} in thread`);
   }
   return {
     // Shown in notifications and anywhere blocks can't be rendered.
     text: `${title} at ${company}`,
-    blocks: [{ type: "section", text: { type: "mrkdwn", text: lines.join("\n") } }],
+    // The divider separates consecutive posts, which Slack otherwise runs together under one bot name.
+    blocks: [{ type: "section", text: { type: "mrkdwn", text: lines.join("\n") } }, { type: "divider" }],
   };
 }
 
