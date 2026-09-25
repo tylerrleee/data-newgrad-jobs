@@ -1,6 +1,7 @@
 import type { Database } from "bun:sqlite";
 import { addDays, etDay } from "./dates.ts";
 import { SOURCE_LABELS, type SourceName } from "./job.ts";
+import { isInternational } from "./region.ts";
 import { classifySlackError, describeSlackError, type JobMessage, type SlackPoster } from "./slack.ts";
 
 /** A job is only posted if it was posted at most this many days ago when jobbo first saw it. */
@@ -18,6 +19,8 @@ export interface PostOptions {
   /** Never post jobs posted before this day (YYYY-MM-DD). */
   postSince: string;
   maxPosts: number;
+  /** Also post jobs whose only locations are outside the US. */
+  postInternational?: boolean;
   paceMs?: number;
 }
 
@@ -39,6 +42,8 @@ export interface PostSummary {
   expired: number;
   decided: number;
   eligible: number;
+  /** Jobs held back because they are only outside the US; they stay pending until they expire. */
+  international: number;
   posted: number;
   replies: number;
   updated: number;
@@ -71,6 +76,7 @@ export async function postPending(db: Database, poster: SlackPoster, options: Po
     expired: 0,
     decided: 0,
     eligible: 0,
+    international: 0,
     posted: 0,
     replies: 0,
     updated: 0,
@@ -95,12 +101,28 @@ export async function postPending(db: Database, poster: SlackPoster, options: Po
 
   summary.claimed = db.query<JobRow, []>("SELECT * FROM jobs WHERE post_state = 'claimed' ORDER BY id").all();
 
-  const candidates = db
+  const pending = db
     .query<JobRow, []>(
       `SELECT * FROM jobs WHERE post_state = 'pending' AND relevant = 1 AND active = 1
        ORDER BY posted_day, first_seen_at, id`,
     )
     .all();
+  // Every listing's locations count, not only the ones shown: any US location keeps the job.
+  const listingsOf = db.query<{ feed: string; locations: string }, { id: number }>(
+    "SELECT feed, locations FROM listings WHERE job_id = $id",
+  );
+  const candidates = options.postInternational
+    ? pending
+    : pending.filter(
+        (job) =>
+          !isInternational(
+            listingsOf.all({ id: job.id }).map((row) => ({
+              feed: row.feed,
+              locations: JSON.parse(row.locations) as string[],
+            })),
+          ),
+      );
+  summary.international = pending.length - candidates.length;
   summary.eligible = candidates.length;
 
   const findParent = db.query<{ slack_ts: string }, Record<string, string | number>>(

@@ -39,7 +39,9 @@ function report(summary: PostSummary, dryRun: boolean, log: Log): void {
   const verb = dryRun ? "would post" : "posted";
   log.info(
     `posting: ${summary.decided} new jobs to consider, ${summary.expired} too old; ` +
-      `${summary.eligible} eligible, ${verb} ${summary.posted} + ${summary.replies} in threads, ` +
+      `${summary.eligible} eligible` +
+      (summary.international > 0 ? ` (${summary.international} international held back)` : "") +
+      `, ${verb} ${summary.posted} + ${summary.replies} in threads, ` +
       `${summary.updated} parents updated, ${summary.deferred} left for the next run` +
       (summary.failed > 0 ? `, ${summary.failed} rejected by Slack` : "") +
       (summary.notUpdated > 0 ? `, ${summary.notUpdated} parents Slack wouldn't update` : ""),
@@ -78,7 +80,13 @@ export async function runOnce(db: Database, sources: JobSource[], options: RunOp
     log.info(`first run: only jobs posted on or after ${postSince} will be posted`);
   }
 
-  const postOptions = { channel, now, postSince, maxPosts: config.maxPostsPerRun };
+  const postOptions = {
+    channel,
+    now,
+    postSince,
+    maxPosts: config.maxPostsPerRun,
+    postInternational: config.postInternational,
+  };
   let summary: PostSummary;
   if (dryRun) {
     // Everything about posting is rolled back; fetched listings stay, so a real run posts the same plan.

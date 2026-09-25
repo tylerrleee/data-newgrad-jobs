@@ -256,6 +256,33 @@ describe("postPending", () => {
     expect(poster.calls).toHaveLength(0);
   });
 
+  test("jobs only outside the US are held back unless international posting is on", async () => {
+    ingest(db, simplify, [
+      greenhouse(1, { locations: ["Toronto, ON, Canada"] }),
+      greenhouse(2, { title: "Backend Intern", locations: ["Toronto, ON, Canada", "New York, NY"] }),
+      greenhouse(3, { title: "Remote Intern", locations: ["Remote"] }),
+    ], { complete: false, now: day1 });
+    // Another source lists job 1 at the same apply URL; its locations count too.
+    ingest(db, ecr, [greenhouse(1, { sourceId: "job_1", locations: ["Singapore"] })], { complete: false, now: day1 });
+
+    const poster = fakePoster();
+    const summary = await postPending(db, poster, options(day1));
+    expect(summary).toMatchObject({ international: 1, eligible: 2, posted: 2 });
+    expect(poster.calls.map((call) => call.message?.title)).toEqual(["Backend Intern", "Remote Intern"]);
+    expect(states()[0]!.post_state).toBe("pending");
+
+    const later = fakePoster();
+    await postPending(db, later, options(day1, { postInternational: true }));
+    expect(later.calls.map((call) => call.message?.url)).toEqual(["https://job-boards.greenhouse.io/acme/jobs/1"]);
+  });
+
+  test("a job with a US location in any source is posted", async () => {
+    ingest(db, simplify, [greenhouse(1, { locations: ["London, UK"] })], { complete: false, now: day1 });
+    ingest(db, ecr, [greenhouse(1, { sourceId: "job_1", locations: ["Chicago, IL"] })], { complete: false, now: day1 });
+    const summary = await postPending(db, fakePoster(), options(day1));
+    expect(summary).toMatchObject({ international: 0, posted: 1 });
+  });
+
   test("pending jobs expire after a week", async () => {
     ingest(db, simplify, [greenhouse(1, { active: false })], { complete: false, now: day1 });
     await postPending(db, fakePoster(), options(day1));
