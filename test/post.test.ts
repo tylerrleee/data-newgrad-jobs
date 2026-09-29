@@ -276,6 +276,25 @@ describe("postPending", () => {
     expect(later.calls.map((call) => call.message?.url)).toEqual(["https://job-boards.greenhouse.io/acme/jobs/1"]);
   });
 
+  test("internships only for graduate students are held back", async () => {
+    ingest(db, simplify, [
+      greenhouse(1, { title: "Software Engineer Intern - MS/PhD" }),
+      greenhouse(2, { title: "Research Intern", raw: JSON.stringify({ degrees: ["Master's", "PhD"] }) }),
+      greenhouse(3, { title: "Data Science Intern", raw: JSON.stringify({ degrees: ["PhD"] }) }),
+      greenhouse(4, { title: "Backend Intern", raw: JSON.stringify({ degrees: ["Bachelor's", "Master's"] }) }),
+    ], { complete: false, now: day1 });
+    // ECR says undergraduates can apply to job 3, so it is posted.
+    ingest(db, ecr, [
+      greenhouse(3, { sourceId: "job_3", title: "Data Science Intern", raw: JSON.stringify({ studentYears: ["3rd year"] }) }),
+    ], { complete: false, now: day1 });
+
+    const poster = fakePoster();
+    const summary = await postPending(db, poster, options(day1));
+    expect(summary).toMatchObject({ graduate: 2, eligible: 2, posted: 2 });
+    expect(poster.calls.map((call) => call.message?.title)).toEqual(["Data Science Intern", "Backend Intern"]);
+    expect(states().map((job) => job.post_state)).toEqual(["pending", "pending", "posted", "posted"]);
+  });
+
   test("a job with a US location in any source is posted", async () => {
     ingest(db, simplify, [greenhouse(1, { locations: ["London, UK"] })], { complete: false, now: day1 });
     ingest(db, ecr, [greenhouse(1, { sourceId: "job_1", locations: ["Chicago, IL"] })], { complete: false, now: day1 });

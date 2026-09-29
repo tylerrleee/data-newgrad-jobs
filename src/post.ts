@@ -1,5 +1,6 @@
 import type { Database } from "bun:sqlite";
 import { addDays, etDay } from "./dates.ts";
+import { isGraduateOnly } from "./degree.ts";
 import { SOURCE_LABELS, type SourceName } from "./job.ts";
 import { isInternational } from "./region.ts";
 import { classifySlackError, describeSlackError, type JobMessage, type SlackPoster } from "./slack.ts";
@@ -44,6 +45,8 @@ export interface PostSummary {
   eligible: number;
   /** Jobs held back because they are only outside the US; they stay pending until they expire. */
   international: number;
+  /** Jobs held back because only graduate students can apply; they also stay pending until they expire. */
+  graduate: number;
   posted: number;
   replies: number;
   updated: number;
@@ -77,6 +80,7 @@ export async function postPending(db: Database, poster: SlackPoster, options: Po
     decided: 0,
     eligible: 0,
     international: 0,
+    graduate: 0,
     posted: 0,
     replies: 0,
     updated: 0,
@@ -107,22 +111,20 @@ export async function postPending(db: Database, poster: SlackPoster, options: Po
        ORDER BY posted_day, first_seen_at, id`,
     )
     .all();
-  // Every listing's locations count, not only the ones shown: any US location keeps the job.
-  const listingsOf = db.query<{ feed: string; locations: string }, { id: number }>(
-    "SELECT feed, locations FROM listings WHERE job_id = $id",
-  );
-  const candidates = options.postInternational
-    ? pending
-    : pending.filter(
-        (job) =>
-          !isInternational(
-            listingsOf.all({ id: job.id }).map((row) => ({
-              feed: row.feed,
-              locations: JSON.parse(row.locations) as string[],
-            })),
-          ),
-      );
-  summary.international = pending.length - candidates.length;
+  // Every listing counts, not only the one shown: any US location keeps the job, and so does any
+  // sign that undergraduates can apply.
+  const listingsOf = db.query<
+    { feed: string; source: SourceName; title: string; locations: string; raw: string },
+    { id: number }
+  >("SELECT feed, source, title, locations, raw FROM listings WHERE job_id = $id");
+  const candidates: JobRow[] = [];
+  for (const job of pending) {
+    const listings = listingsOf.all({ id: job.id });
+    const locations = listings.map((row) => ({ feed: row.feed, locations: JSON.parse(row.locations) as string[] }));
+    if (!options.postInternational && isInternational(locations)) summary.international++;
+    else if (isGraduateOnly(listings)) summary.graduate++;
+    else candidates.push(job);
+  }
   summary.eligible = candidates.length;
 
   const findParent = db.query<{ slack_ts: string }, Record<string, string | number>>(

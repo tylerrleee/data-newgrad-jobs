@@ -37,10 +37,14 @@ export function printingPoster(log: Log): SlackPoster {
 
 function report(summary: PostSummary, dryRun: boolean, log: Log): void {
   const verb = dryRun ? "would post" : "posted";
+  const held = [
+    summary.international > 0 ? `${summary.international} international` : "",
+    summary.graduate > 0 ? `${summary.graduate} graduate-only` : "",
+  ].filter(Boolean);
   log.info(
     `posting: ${summary.decided} new jobs to consider, ${summary.expired} too old; ` +
       `${summary.eligible} eligible` +
-      (summary.international > 0 ? ` (${summary.international} international held back)` : "") +
+      (held.length > 0 ? ` (${held.join(", ")} held back)` : "") +
       `, ${verb} ${summary.posted} + ${summary.replies} in threads, ` +
       `${summary.updated} parents updated, ${summary.deferred} left for the next run` +
       (summary.failed > 0 ? `, ${summary.failed} rejected by Slack` : "") +
