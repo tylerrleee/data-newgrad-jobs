@@ -1,16 +1,24 @@
-export type SourceName = "ecr" | "simplify" | "speedyapply";
+export type SourceName = "ecr" | "simplify" | "speedyapply" | "zshah" | "zapply";
 
 export const SOURCE_LABELS: Record<SourceName, string> = {
   ecr: "Early Career Radar",
   simplify: "Simplify",
   speedyapply: "speedyapply",
+  zshah: "zshah101",
+  zapply: "Zapply",
 };
 
-/** Whose company and title to show when several sources list a job: employer text first. */
-export const SOURCE_PRIORITY: SourceName[] = ["ecr", "speedyapply", "simplify"];
+/**
+ * Whose company and title to show when several sources list a job: employer text first. zshah101
+ * and zapply come last because zapply gives legal names ("Amazon.com Services LLC").
+ */
+export const SOURCE_PRIORITY: SourceName[] = ["ecr", "speedyapply", "simplify", "zshah", "zapply"];
 
-/** Whose locations to show: Simplify and speedyapply tidy them, ECR copies the ATS's text. */
-export const LOCATION_PRIORITY: SourceName[] = ["simplify", "speedyapply", "ecr"];
+/**
+ * Whose locations to show: Simplify and speedyapply tidy them, ECR and zshah101 copy the ATS's
+ * text, and zapply cuts long ones short ("Greenville, South Carolina,...").
+ */
+export const LOCATION_PRIORITY: SourceName[] = ["simplify", "speedyapply", "ecr", "zshah", "zapply"];
 
 /** One row of one feed. */
 export interface Listing {

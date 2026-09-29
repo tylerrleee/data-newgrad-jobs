@@ -1,5 +1,5 @@
 import { afterAll, describe, expect, test } from "bun:test";
-import { get, HttpError, RangeIgnoredError, USER_AGENT } from "../src/http.ts";
+import { get, HttpError, RangeIgnoredError, redirectTarget, USER_AGENT } from "../src/http.ts";
 
 let lastHeaders = new Headers();
 let endlessCancelled = false;
@@ -72,6 +72,12 @@ const server = Bun.serve({
         return Response.redirect(`${other.url}landing`, 302);
       case "/moved":
         return Response.redirect("/ok", 301);
+      case "/link":
+        return Response.redirect("/link/", 301);
+      case "/link/":
+        return Response.redirect(`${other.url}job?id=7`, 302);
+      case "/loop":
+        return Response.redirect("/loop", 302);
       case "/to-api":
         return Response.redirect("/api/jobs", 302);
       case "/api/jobs":
@@ -226,5 +232,28 @@ describe("get: errors", () => {
     const error = await failure(get(url("/slow-body"), { ...plain, timeoutMs: 100 }));
     expect(error).toMatchObject({ name: "TimeoutError" });
     expect(performance.now() - started).toBeLessThan(1_500);
+  });
+});
+
+describe("redirectTarget", () => {
+  test("follows hops on its own site and returns the first address elsewhere, unrequested", async () => {
+    const before = otherRequests;
+    expect(await redirectTarget(url("/link"), 5_000)).toBe(`${other.url}job?id=7`);
+    expect(otherRequests).toBe(before);
+    expect(lastHeaders.get("user-agent")).toBe(USER_AGENT);
+  });
+
+  test("a link that ends on a page of its own site returns that page", async () => {
+    expect(await redirectTarget(url("/moved"), 5_000)).toBe(url("/ok"));
+    expect(await redirectTarget(url("/ok"), 5_000)).toBe(url("/ok"));
+  });
+
+  test("an error status throws HttpError", async () => {
+    expect(await failure(redirectTarget(url("/gone"), 5_000))).toMatchObject({ status: 404 });
+    expect(await failure(redirectTarget(url("/limited"), 5_000))).toMatchObject({ status: 429, retryAfterSeconds: 120 });
+  });
+
+  test("gives up after 5 redirects", async () => {
+    expect(String(await failure(redirectTarget(url("/loop"), 5_000)))).toContain("more than 5 redirects");
   });
 });

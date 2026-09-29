@@ -26,7 +26,7 @@ const CORE_CATEGORIES = new Set([
 
 // Simplify's categories are broad: "Software" includes general IT and engineering roles and
 // "AI/ML/Data" includes business analytics, geology and sustainability, so the title must also
-// look technical.
+// look technical. zshah101's categories are just as broad.
 const TECH_TITLE =
   /\b(technolog\w*|tech|it|information (technology|systems?)|applications?|digital|engineer\w*|develop\w*|automation|systems?|architect\w*|coding|programming|compil\w*|comput\w*|network\w*|iot|simulation|robot\w*|autonom\w*)\b/i;
 const DATA_TITLE =
@@ -36,6 +36,7 @@ const HINTED_CATEGORIES = new Map([
   ["Software Engineering", TECH_TITLE],
   ["AI/ML/Data", DATA_TITLE],
   ["Data Science, AI & Machine Learning", DATA_TITLE],
+  ["Data & ML/AI", DATA_TITLE],
 ]);
 
 // "Software-defined radio" is hardware; "platform" alone is mostly TikTok operations and hardware;

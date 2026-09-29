@@ -96,6 +96,23 @@ describe("isSoftware", () => {
     );
   });
 
+  test("zshah101's data category also needs a data title", () => {
+    expectSoftware(
+      [
+        ["Data & ML/AI", "Data Science/ Data Engineer Intern"],
+        ["Data & ML/AI", "Decision Science Intern"],
+      ],
+      true,
+    );
+    expectSoftware(
+      [
+        ["Data & ML/AI", "Sustainability Intern"],
+        ["Data & ML/AI", "Co-Op, Bioanalytics"],
+      ],
+      false,
+    );
+  });
+
   test("some roles aren't engineering even when the title says software", () => {
     expectSoftware(
       [

@@ -19,6 +19,12 @@ Each run does these steps:
 | [SimplifyJobs/Summer2027-Internships](https://github.com/SimplifyJobs/Summer2027-Internships) | [`listings.json`](https://raw.githubusercontent.com/SimplifyJobs/Summer2027-Internships/dev/.github/scripts/listings.json) on the `dev` branch | 20 minutes |
 | [speedyapply/2027-SWE-College-Jobs](https://github.com/speedyapply/2027-SWE-College-Jobs) | [US](https://raw.githubusercontent.com/speedyapply/2027-SWE-College-Jobs/main/README.md) and [international](https://raw.githubusercontent.com/speedyapply/2027-SWE-College-Jobs/main/INTERN_INTL.md) internship tables | 20 minutes |
 | [speedyapply/2027-AI-College-Jobs](https://github.com/speedyapply/2027-AI-College-Jobs) | [US](https://raw.githubusercontent.com/speedyapply/2027-AI-College-Jobs/main/README.md) and [international](https://raw.githubusercontent.com/speedyapply/2027-AI-College-Jobs/main/INTERN_INTL.md) internship tables | 20 minutes |
+| [zshah101/Automated-List-Of-Summer-2027-and-Fall-2026-Tech-Internships](https://github.com/zshah101/Automated-List-Of-Summer-2027-and-Fall-2026-Tech-Internships) | [`data/jobs.json`](https://raw.githubusercontent.com/zshah101/Automated-List-Of-Summer-2027-and-Fall-2026-Tech-Internships/main/data/jobs.json), every job it has found, open or closed | 20 minutes |
+| [zapplyjobs/Internships-2027](https://github.com/zapplyjobs/Internships-2027) | The [README](https://raw.githubusercontent.com/zapplyjobs/Internships-2027/main/README.md) tables: the newest 100 internships of each section | 20 minutes |
+
+zshah101 and zapply get their jobs from the employers' ATS boards, so they often list jobs hours before the other sources. They also list jobs that the other sources don't have.
+
+Each zapply link goes through a zapply.jobs redirect. jobbo follows each new link one time to find the employer URL, and then stores it. It follows at most 150 new links per run. zapply gives each job the date that the ATS shows now, so a job that an employer posts again appears as a new job.
 
 The feed code is in `src/sources/`. When a source fails, the other sources continue. After three failures in a row, jobbo posts an alert to the channel.
 

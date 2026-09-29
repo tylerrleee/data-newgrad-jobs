@@ -79,6 +79,7 @@ export async function runFeeds(
         const stats = ingest(db, source, fetched.listings, { complete: fetched.complete, now });
         recordSuccess(db, source.name, now, fetched);
         const parts = [
+          fetched.detail,
           `${stats.listings} listings`,
           fetched.skipped > 0 ? `${fetched.skipped} unparseable rows skipped` : undefined,
           `${stats.newJobs} new jobs`,
@@ -86,8 +87,7 @@ export async function runFeeds(
           `${stats.deactivated} now inactive`,
           stats.guarded ? "too many missing at once, so only those gone 48h+ marked inactive" : undefined,
         ];
-        const detail = fetched.detail ? ` ${fetched.detail}` : "";
-        log(`${source.name}:${detail} ${parts.filter(Boolean).join(", ")} (${seconds}s)`);
+        log(`${source.name}: ${parts.filter(Boolean).join(", ")} (${seconds}s)`);
       })();
       if (state.alerted) {
         result.alerts.push({ feed: source.name, text: `jobbo: ${source.name} is working again.`, alerted: false });

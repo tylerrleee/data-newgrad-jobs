@@ -36,6 +36,30 @@ function retryAfter(header: string | null, now: number): number | undefined {
   return Number.isNaN(date) ? undefined : Math.max(0, (date - now) / 1000);
 }
 
+/**
+ * Where a redirect link leads: hops on its own site are followed, and the first address on another
+ * site is returned without being requested. A link that ends on a page of its own site returns
+ * that page's address.
+ */
+export async function redirectTarget(url: string, timeoutMs: number): Promise<string> {
+  const signal = AbortSignal.timeout(timeoutMs);
+  const requested = new URL(url);
+  for (let target = requested, hops = 0; hops <= MAX_REDIRECTS; hops++) {
+    const response = await fetch(target, { headers: { "User-Agent": USER_AGENT }, signal, redirect: "manual" });
+    await response.body?.cancel();
+    const location = response.headers.get("location");
+    if (response.status >= 300 && response.status <= 399 && location) {
+      target = new URL(location, target);
+      if (target.origin !== requested.origin) return target.href;
+    } else if (response.ok) {
+      return target.href;
+    } else {
+      throw new HttpError(target.href, response.status, retryAfter(response.headers.get("retry-after"), Date.now()));
+    }
+  }
+  throw new Error(`${url}: more than ${MAX_REDIRECTS} redirects`);
+}
+
 export async function get(url: string, options: GetOptions): Promise<GetResult> {
   const headers: Record<string, string> = {
     "User-Agent": USER_AGENT,

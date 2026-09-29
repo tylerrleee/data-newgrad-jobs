@@ -8,6 +8,8 @@ import {
   parseEcrTimestamp,
   simplifyPostedDay,
   speedyapplyPostedDay,
+  zapplyPostedDay,
+  zshahPostedDay,
 } from "../src/dates.ts";
 
 const at = (iso: string) => new Date(iso);
@@ -177,6 +179,52 @@ describe("speedyapplyPostedDay", () => {
     expect(speedyapplyPostedDay(at("2026-09-24T18:00:00Z"), " 3d ")).toBe("2026-09-21");
     for (const age of ["", "3", "d", "-1d", "1.5d", "3 days", "3D", "new", "12345d"]) {
       expect(speedyapplyPostedDay(at("2026-09-24T18:00:00Z"), age)).toBeUndefined();
+    }
+  });
+});
+
+describe("zshahPostedDay", () => {
+  test("a date_only posted_at is that calendar day", () => {
+    expect(zshahPostedDay("2026-09-24T00:00:00Z", "date_only", "2026-09-25T02:00:00Z")).toBe("2026-09-24");
+  });
+
+  test("an exact posted_at is its New York day", () => {
+    expect(zshahPostedDay("2026-09-02T21:47:29.454+00:00", "exact", "2026-09-02T22:53:50Z")).toBe("2026-09-02");
+    expect(zshahPostedDay("2026-09-03T02:00:00Z", "exact", "2026-09-03T02:30:00Z")).toBe("2026-09-02");
+    expect(zshahPostedDay("2026-08-24T16:37:48-04:00", "relative_derived", null)).toBe("2026-08-24");
+  });
+
+  test("without a usable posted_at, uses the New York day of first_seen_at", () => {
+    expect(zshahPostedDay(null, undefined, "2026-06-30T19:49:56Z")).toBe("2026-06-30");
+    expect(zshahPostedDay("soon", "date_only", "2026-07-01T03:00:00Z")).toBe("2026-06-30");
+  });
+
+  test("is undefined when neither date parses", () => {
+    expect(zshahPostedDay(null, null, null)).toBeUndefined();
+    expect(zshahPostedDay("soon", "exact", "later")).toBeUndefined();
+  });
+});
+
+describe("zapplyPostedDay", () => {
+  const evening = at("2026-09-29T21:30:00Z");
+
+  test("counts minutes, hours and days back from the fetch, in New York days", () => {
+    expect(zapplyPostedDay(evening, "33m")).toBe("2026-09-29");
+    expect(zapplyPostedDay(evening, "18h")).toBe("2026-09-28");
+    expect(zapplyPostedDay(evening, "1d")).toBe("2026-09-28");
+    expect(zapplyPostedDay(evening, "6d")).toBe("2026-09-23");
+    expect(zapplyPostedDay(at("2026-09-30T04:30:00Z"), "10m")).toBe("2026-09-30");
+  });
+
+  test("a week counts its far end, so a week-old row is never fresh", () => {
+    expect(zapplyPostedDay(evening, "1w")).toBe("2026-09-16");
+    expect(zapplyPostedDay(evening, "2w")).toBe("2026-09-09");
+  });
+
+  test("tolerates padding but rejects anything else", () => {
+    expect(zapplyPostedDay(evening, " 4h ")).toBe("2026-09-29");
+    for (const age of ["", "Date unknown", "3", "m", "-1d", "1.5d", "3 days", "3D", "1y", "12345d"]) {
+      expect(zapplyPostedDay(evening, age)).toBeUndefined();
     }
   });
 });

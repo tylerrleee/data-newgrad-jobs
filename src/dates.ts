@@ -58,6 +58,34 @@ export function simplifyPostedDay(epochSeconds: unknown): string | undefined {
   return epochSeconds % 86_400 === 0 ? instant.toISOString().slice(0, 10) : etDay(instant);
 }
 
+/** zshah101's posted_at is a day ("date_only", stored as midnight UTC) or an instant; firstSeenAt otherwise. */
+export function zshahPostedDay(postedAt: unknown, postedAtSource: unknown, firstSeenAt: unknown): string | undefined {
+  if (typeof postedAt === "string" && postedAtSource === "date_only") {
+    const day = postedAt.slice(0, 10);
+    if (isDay(day)) return day;
+  }
+  for (const value of [postedAt, firstSeenAt]) {
+    const ms = typeof value === "string" ? Date.parse(value) : NaN;
+    if (!Number.isNaN(ms)) return etDay(new Date(ms));
+  }
+  return undefined;
+}
+
+const AGE_UNIT_MS: Record<string, number> = { m: 60_000, h: 3_600_000, d: DAY_MS };
+
+/**
+ * zapply's ages ("3m", "4h", "2d", "1w") count back from its README build, at most about 20 minutes
+ * before the fetch. "1w" means 7 to 13 days, so weeks count their far end: a job that may be too old
+ * to post never looks fresh.
+ */
+export function zapplyPostedDay(fetchedAt: Date, age: string): string | undefined {
+  const match = /^(\d{1,4})([mhdw])$/.exec(age.trim());
+  if (!match) return undefined;
+  const count = Number(match[1]);
+  const ms = match[2] === "w" ? (count * 7 + 6) * DAY_MS : count * AGE_UNIT_MS[match[2]!]!;
+  return etDay(new Date(fetchedAt.getTime() - ms));
+}
+
 const REGENERATION_CUTOFF_MS = (12 * 60 + 30) * 60_000;
 
 /**
