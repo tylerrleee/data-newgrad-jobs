@@ -352,9 +352,13 @@ describe("isSoftware: fixes from the snapshot audit", () => {
         ["AI/ML/Data", "Transportation Planning Intern"],
         ["AI/ML/Data", "Water Resources Intern"],
         ["AI/ML/Data", "Stormwater Intern - Wastewater Management"],
+        ["Software", "Project Coordinator Intern - Infrastructure (Summer 2027)"],
+        ["Hardware & Engineering", "Structural Engineering Intern/Co-op – Infrastructure (Summer 2027)"],
+        ["ML & AI", "AI Project Coordinator Intern"],
       ],
       false,
     );
+    expectSoftware([["Software", "Software Developer Intern - Structural"]], true);
     expectSoftware(
       [
         ["Other Engineering", "Infrastructure Engineering Summer Intern"],
