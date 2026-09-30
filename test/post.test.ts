@@ -295,6 +295,19 @@ describe("postPending", () => {
     expect(states().map((job) => job.post_state)).toEqual(["pending", "pending", "posted", "posted"]);
   });
 
+  test("internships only for high school students are held back", async () => {
+    ingest(db, simplify, [
+      greenhouse(1, { title: "High School Internship, Software Engineering" }),
+      greenhouse(2, { title: "High School or College Software Intern" }),
+    ], { complete: false, now: day1 });
+
+    const poster = fakePoster();
+    const summary = await postPending(db, poster, options(day1));
+    expect(summary).toMatchObject({ highSchool: 1, eligible: 1, posted: 1 });
+    expect(poster.calls.map((call) => call.message?.title)).toEqual(["High School or College Software Intern"]);
+    expect(states().map((job) => job.post_state)).toEqual(["pending", "posted"]);
+  });
+
   test("a job with a US location in any source is posted", async () => {
     ingest(db, simplify, [greenhouse(1, { locations: ["London, UK"] })], { complete: false, now: day1 });
     ingest(db, ecr, [greenhouse(1, { sourceId: "job_1", locations: ["Chicago, IL"] })], { complete: false, now: day1 });

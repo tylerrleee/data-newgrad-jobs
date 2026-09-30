@@ -1,6 +1,6 @@
 import type { Database } from "bun:sqlite";
 import { addDays, etDay } from "./dates.ts";
-import { isGraduateOnly } from "./degree.ts";
+import { isGraduateOnly, isHighSchoolOnly } from "./degree.ts";
 import { SOURCE_LABELS, type SourceName } from "./job.ts";
 import { isInternational } from "./region.ts";
 import { classifySlackError, describeSlackError, type JobMessage, type SlackPoster } from "./slack.ts";
@@ -47,6 +47,8 @@ export interface PostSummary {
   international: number;
   /** Jobs held back because only graduate students can apply; they also stay pending until they expire. */
   graduate: number;
+  /** Jobs held back because only high school students can apply; they also stay pending until they expire. */
+  highSchool: number;
   posted: number;
   replies: number;
   updated: number;
@@ -81,6 +83,7 @@ export async function postPending(db: Database, poster: SlackPoster, options: Po
     eligible: 0,
     international: 0,
     graduate: 0,
+    highSchool: 0,
     posted: 0,
     replies: 0,
     updated: 0,
@@ -127,6 +130,7 @@ export async function postPending(db: Database, poster: SlackPoster, options: Po
     }));
     if (!options.postInternational && isInternational(locations)) summary.international++;
     else if (isGraduateOnly(listings)) summary.graduate++;
+    else if (isHighSchoolOnly(listings)) summary.highSchool++;
     else candidates.push(job);
   }
   summary.eligible = candidates.length;

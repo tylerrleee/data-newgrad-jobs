@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { isGraduateOnly, recordLevel, titleLevel, type Level } from "../src/degree.ts";
+import { isGraduateOnly, isHighSchoolOnly, recordLevel, titleLevel, type Level } from "../src/degree.ts";
 import type { SourceName } from "../src/job.ts";
 
 function expectTitles(titles: string[], level: Level) {
@@ -54,6 +54,21 @@ describe("titleLevel", () => {
       ],
       "undergraduate",
     );
+  });
+
+  test("high school students", () => {
+    expectTitles(
+      [
+        "High School Internship, Software Engineering (Summer 2027)",
+        "High School Software Intern",
+        "Innovation Developer - High School Student - RBC Embark",
+        "Highschool Coding Intern",
+        "Secondary School Work Experience - Technology",
+      ],
+      "high school",
+    );
+    expectTitles(["High School or College Intern - IT", "Software Intern (High School / Undergraduate)"], "undergraduate");
+    expectTitles(["HS Planning Intern"], "unknown");
   });
 
   test("words that look like degrees but aren't", () => {
@@ -151,5 +166,27 @@ describe("isGraduateOnly", () => {
     expect(isGraduateOnly([at("speedyapply", "Software Engineer Intern")])).toBe(false);
     expect(isGraduateOnly([at("ecr", "Software Engineer Intern", { studentYears: ["Not stated"] })])).toBe(false);
     expect(isGraduateOnly([])).toBe(false);
+  });
+});
+
+describe("isHighSchoolOnly", () => {
+  const at = (source: SourceName, title: string, record: object = {}) => ({ source, title, raw: JSON.stringify(record) });
+
+  test("a high school title outranks the records", () => {
+    expect(
+      isHighSchoolOnly([
+        at("ecr", "High School Internship, Software Engineering (Summer 2027)", { studentYears: ["New grad"] }),
+        at("zapply", "High School Internship, Software Engineering (Summer 2027)"),
+      ]),
+    ).toBe(true);
+    expect(isHighSchoolOnly([at("simplify", "High School Software Intern", { degrees: ["Bachelor's"] })])).toBe(true);
+  });
+
+  test("any listing open to undergraduates keeps the job", () => {
+    expect(
+      isHighSchoolOnly([at("simplify", "High School Software Intern"), at("ecr", "Undergraduate Software Intern")]),
+    ).toBe(false);
+    expect(isHighSchoolOnly([at("simplify", "High School or College Software Intern")])).toBe(false);
+    expect(isHighSchoolOnly([at("simplify", "Software Intern")])).toBe(false);
   });
 });

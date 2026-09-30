@@ -40,6 +40,7 @@ function report(summary: PostSummary, dryRun: boolean, log: Log): void {
   const held = [
     summary.international > 0 ? `${summary.international} international` : "",
     summary.graduate > 0 ? `${summary.graduate} graduate-only` : "",
+    summary.highSchool > 0 ? `${summary.highSchool} high-school-only` : "",
   ].filter(Boolean);
   log.info(
     `posting: ${summary.decided} new jobs to consider, ${summary.expired} too old; ` +
