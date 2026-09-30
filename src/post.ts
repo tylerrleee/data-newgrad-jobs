@@ -120,7 +120,11 @@ export async function postPending(db: Database, poster: SlackPoster, options: Po
   const candidates: JobRow[] = [];
   for (const job of pending) {
     const listings = listingsOf.all({ id: job.id });
-    const locations = listings.map((row) => ({ feed: row.feed, locations: JSON.parse(row.locations) as string[] }));
+    const locations = listings.map((row) => ({
+      feed: row.feed,
+      title: row.title,
+      locations: JSON.parse(row.locations) as string[],
+    }));
     if (!options.postInternational && isInternational(locations)) summary.international++;
     else if (isGraduateOnly(listings)) summary.graduate++;
     else candidates.push(job);

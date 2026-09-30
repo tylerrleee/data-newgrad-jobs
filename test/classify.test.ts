@@ -300,6 +300,18 @@ describe("isSoftware: fixes from the snapshot audit", () => {
     );
   });
 
+  test("CNC programmers and machinists work in a machine shop", () => {
+    expectSoftware(
+      [
+        ["Other Internships", "Lynn CNC Programmer Co-Op"],
+        ["Software", "CNC Programming Intern"],
+        [null, "Machinist Apprentice"],
+      ],
+      false,
+    );
+    expectSoftware([["Other", "Gameplay Programmer Intern"]], true);
+  });
+
   test("application development, databases and languages are software", () => {
     expectSoftware(
       [

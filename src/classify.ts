@@ -48,9 +48,9 @@ const SOFTWARE_TITLE =
 const NOT_ENGINEERING =
   /\b(sales|recruiters?|recruit(ing|ment) (intern|coordinator|assistant)\w*|talent acquisition|legal|product marketing|product manag\w*|product owner|program manag\w*|project manag\w*)\b/i;
 // Other fields, unless a strong software word says otherwise: "Software Engineer Intern - Hardware".
-// Transportation, roadway and water catch civil "infrastructure" roles.
+// Transportation, roadway and water catch civil "infrastructure" roles; CNC catches machine-shop "programmer" roles.
 const OTHER_FIELD =
-  /\b(financ\w*|accounting|audit\w*|tax|marketing|human resources|hr|business (analyst|analytics|intelligence)|investment\w*|investing|banking|equity|wealth|supply chain|procurement|mechanical|civil|transportation|roadway|water|wastewater|chemical|manufacturing|hardware|asic|fpga|analog|rf|pcb|actuar\w*|graphic design\w*|(ui ?\/ ?)?ux( ?\/ ?ui)? (design|research)\w*|product design)\b/i;
+  /\b(financ\w*|accounting|audit\w*|tax|marketing|human resources|hr|business (analyst|analytics|intelligence)|investment\w*|investing|banking|equity|wealth|supply chain|procurement|mechanical|civil|transportation|roadway|water|wastewater|chemical|manufacturing|cnc|machining|machinists?|hardware|asic|fpga|analog|rf|pcb|actuar\w*|graphic design\w*|(ui ?\/ ?)?ux( ?\/ ?ui)? (design|research)\w*|product design)\b/i;
 const STRONG =
   /\b(software(?![- ]defined)|swe|(?<!\b(hardware|fpga|asic)( and systems)? )developer|app(lication)? develop\w*|machine learning|data scien\w*|data engineer\w*|(ai|artificial intelligence) engineer\w*)\b/i;
 

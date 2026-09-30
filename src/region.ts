@@ -58,20 +58,32 @@ export function locationRegion(location: string): Region {
   return "unknown";
 }
 
+/**
+ * True when a job title names a country or city abroad and no US place ("Software Engineering
+ * Internship - Ireland"). The case-sensitive codes are left out: in a title, "CAN" is a bus, not Canada.
+ */
+export function titleNamesAbroad(title: string): boolean {
+  if (US_COUNTRY.test(title) || US_STATE_NAME.test(title) || US_PLACE.test(title)) return false;
+  return FOREIGN_COUNTRY.test(title) || FOREIGN_PLACE.test(title);
+}
+
 // speedyapply splits its lists into US and international files (feeds named in src/sources/speedyapply.ts).
-// A US-file row can show a foreign location first and hide the rest behind "+2", so the file decides.
+// A US-file row can show a foreign location first and hide the rest behind "+2", so the file decides,
+// unless the title names a place abroad: Red Hat's "Software Engineering Internship - Ireland" is in the US file.
 const US_FEEDS = new Set(["speedyapply-swe-us", "speedyapply-ai-us"]);
 const FOREIGN_FEEDS = new Set(["speedyapply-swe-intl", "speedyapply-ai-intl"]);
 
 /**
  * True when a job is only outside the US: none of its listings is in the US, and some listing has
- * a foreign location or comes from an international feed. Unclear jobs ("Remote") count as US.
+ * a foreign location, a title that names a place abroad, or comes from an international feed.
+ * Unclear jobs ("Remote") count as US.
  */
-export function isInternational(listings: { feed: string; locations: string[] }[]): boolean {
+export function isInternational(listings: { feed: string; title?: string; locations: string[] }[]): boolean {
   let abroad = false;
   for (const listing of listings) {
-    if (US_FEEDS.has(listing.feed)) return false;
-    if (FOREIGN_FEEDS.has(listing.feed)) abroad = true;
+    const titledAbroad = titleNamesAbroad(listing.title ?? "");
+    if (US_FEEDS.has(listing.feed) && !titledAbroad) return false;
+    if (FOREIGN_FEEDS.has(listing.feed) || titledAbroad) abroad = true;
     for (const location of listing.locations) {
       const region = locationRegion(location);
       if (region === "us") return false;

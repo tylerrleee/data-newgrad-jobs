@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { isInternational, locationRegion } from "../src/region.ts";
+import { isInternational, locationRegion, titleNamesAbroad } from "../src/region.ts";
 
 describe("locationRegion", () => {
   test("US locations in each source's style", () => {
@@ -82,5 +82,33 @@ describe("isInternational", () => {
   test("speedyapply's US and international files decide for their rows", () => {
     expect(isInternational([{ feed: "speedyapply-swe-intl", locations: ["Remote"] }])).toBe(true);
     expect(isInternational([{ feed: "speedyapply-ai-us", locations: ["London, United Kingdom +2"] }])).toBe(false);
+  });
+
+  test("a title that names a place abroad outranks speedyapply's US file", () => {
+    const redHat = {
+      feed: "speedyapply-swe-us",
+      title: "Software Engineering Internship - Ireland",
+      locations: ["Waterford, Ireland +2"],
+    };
+    expect(isInternational([redHat])).toBe(true);
+    expect(isInternational([{ ...redHat, title: "Software Engineer Intern - Dublin office" }])).toBe(true);
+    expect(isInternational([{ ...redHat, title: "Software Engineering Internship" }])).toBe(false);
+    // A US location still keeps the job.
+    expect(isInternational([{ ...redHat, locations: ["Waterford, Ireland", "Boston, MA"] }])).toBe(false);
+  });
+});
+
+describe("titleNamesAbroad", () => {
+  test("countries and cities abroad", () => {
+    expect(titleNamesAbroad("Software Engineering Internship - Ireland")).toBe(true);
+    expect(titleNamesAbroad("Openshift AI Sustaining Engineering Intern- Waterford office - Ireland")).toBe(true);
+    expect(titleNamesAbroad("Data Analyst Intern - London")).toBe(true);
+  });
+
+  test("US places, and codes that are words in a title", () => {
+    expect(titleNamesAbroad("Software Engineer Intern")).toBe(false);
+    expect(titleNamesAbroad("Software Engineer Intern - New Jersey")).toBe(false);
+    expect(titleNamesAbroad("Software Engineer Intern, US - Europe Payments")).toBe(false);
+    expect(titleNamesAbroad("Embedded Software Intern - CAN Bus")).toBe(false);
   });
 });
