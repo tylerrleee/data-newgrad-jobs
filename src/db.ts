@@ -69,6 +69,14 @@ const SCHEMA = `
   CREATE INDEX IF NOT EXISTS listings_by_key ON listings (key);
   CREATE INDEX IF NOT EXISTS listings_by_job ON listings (job_id);
 
+  -- The posting text of jobs that may be posted, read once (description.ts).
+  CREATE TABLE IF NOT EXISTS descriptions (
+    job_id INTEGER PRIMARY KEY REFERENCES jobs (id),
+    status TEXT NOT NULL CHECK (status IN ('ok', 'unavailable')),
+    text TEXT,
+    fetched_at TEXT NOT NULL
+  ) STRICT;
+
   -- Every scraped listing and whether its job has been posted.
   CREATE VIEW IF NOT EXISTS listing_status AS
     SELECT l.feed, l.source_id, l.company, l.title, l.locations, l.posted_day, l.active,
@@ -216,6 +224,23 @@ export function recordFailure(db: Database, name: string, error: string, nextAtt
 
 export function setAlerted(db: Database, name: string, alerted: boolean): void {
   db.query("UPDATE feeds SET alerted = $alerted WHERE name = $name").run({ name, alerted: alerted ? 1 : 0 });
+}
+
+export function saveDescription(
+  db: Database,
+  jobId: number,
+  description: { status: "ok"; text: string } | { status: "unavailable" },
+  now: Date,
+): void {
+  db.query(
+    `INSERT INTO descriptions (job_id, status, text, fetched_at) VALUES ($jobId, $status, $text, $now)
+     ON CONFLICT (job_id) DO UPDATE SET status = $status, text = $text, fetched_at = $now`,
+  ).run({
+    jobId,
+    status: description.status,
+    text: description.status === "ok" ? description.text : null,
+    now: now.toISOString(),
+  });
 }
 
 export function storedRaw(db: Database, feed: string, sourceId: string): string | undefined {

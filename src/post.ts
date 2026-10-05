@@ -1,6 +1,7 @@
 import type { Database } from "bun:sqlite";
 import { addDays, etDay } from "./dates.ts";
 import { isGraduateOnly, isHighSchoolOnly } from "./degree.ts";
+import { needsExperience, type Requirement } from "./experience.ts";
 import { SOURCE_LABELS, type SourceName } from "./job.ts";
 import { isInternational } from "./region.ts";
 import { classifySlackError, describeSlackError, type JobMessage, type SlackPoster } from "./slack.ts";
@@ -49,6 +50,8 @@ export interface PostSummary {
   graduate: number;
   /** Jobs held back because only high school students can apply; they also stay pending until they expire. */
   highSchool: number;
+  /** Jobs held back because their posting asks for HOLD_YEARS+ years of experience, and the sentence that does. */
+  experienced: { job: JobRow; requirement: Requirement }[];
   posted: number;
   replies: number;
   updated: number;
@@ -72,11 +75,42 @@ function message(job: JobRow, moreInThread: number): JobMessage {
   };
 }
 
+/** The first day a job can have been posted and still be posted now. */
+export function postWindowStart(now: Date, postSince: string): string {
+  const minimum = addDays(etDay(now), -MAX_AGE_DAYS);
+  return postSince > minimum ? postSince : minimum;
+}
+
+export interface ListingRow {
+  feed: string;
+  source: SourceName;
+  title: string;
+  locations: string;
+  raw: string;
+}
+
+/**
+ * Why a job's listings keep it from being posted, if they do. Every listing counts, not only the
+ * one shown: any US location keeps the job, and so does any sign that undergraduates can apply.
+ */
+export function holdReason(
+  listings: ListingRow[],
+  postInternational = false,
+): "international" | "graduate" | "highSchool" | undefined {
+  const locations = listings.map((row) => ({
+    feed: row.feed,
+    title: row.title,
+    locations: JSON.parse(row.locations) as string[],
+  }));
+  if (!postInternational && isInternational(locations)) return "international";
+  if (isGraduateOnly(listings)) return "graduate";
+  if (isHighSchoolOnly(listings)) return "highSchool";
+  return undefined;
+}
+
 export async function postPending(db: Database, poster: SlackPoster, options: PostOptions): Promise<PostSummary> {
   const now = options.now.toISOString();
-  const today = etDay(options.now);
-  const minimum = addDays(today, -MAX_AGE_DAYS);
-  const since = options.postSince > minimum ? options.postSince : minimum;
+  const since = postWindowStart(options.now, options.postSince);
   const summary: PostSummary = {
     expired: 0,
     decided: 0,
@@ -84,6 +118,7 @@ export async function postPending(db: Database, poster: SlackPoster, options: Po
     international: 0,
     graduate: 0,
     highSchool: 0,
+    experienced: [],
     posted: 0,
     replies: 0,
     updated: 0,
@@ -114,23 +149,20 @@ export async function postPending(db: Database, poster: SlackPoster, options: Po
        ORDER BY posted_day, first_seen_at, id`,
     )
     .all();
-  // Every listing counts, not only the one shown: any US location keeps the job, and so does any
-  // sign that undergraduates can apply.
-  const listingsOf = db.query<
-    { feed: string; source: SourceName; title: string; locations: string; raw: string },
-    { id: number }
-  >("SELECT feed, source, title, locations, raw FROM listings WHERE job_id = $id");
+  const listingsOf = db.query<ListingRow, { id: number }>(
+    "SELECT feed, source, title, locations, raw FROM listings WHERE job_id = $id",
+  );
+  // A job whose posting hasn't been read (an unknown site, or a failed fetch) is posted.
+  const postingOf = db.query<{ text: string }, { id: number }>(
+    "SELECT text FROM descriptions WHERE job_id = $id AND status = 'ok'",
+  );
   const candidates: JobRow[] = [];
   for (const job of pending) {
-    const listings = listingsOf.all({ id: job.id });
-    const locations = listings.map((row) => ({
-      feed: row.feed,
-      title: row.title,
-      locations: JSON.parse(row.locations) as string[],
-    }));
-    if (!options.postInternational && isInternational(locations)) summary.international++;
-    else if (isGraduateOnly(listings)) summary.graduate++;
-    else if (isHighSchoolOnly(listings)) summary.highSchool++;
+    const reason = holdReason(listingsOf.all({ id: job.id }), options.postInternational);
+    const posting = reason === undefined ? postingOf.get({ id: job.id }) : null;
+    const requirement = posting ? needsExperience(posting.text) : undefined;
+    if (reason !== undefined) summary[reason]++;
+    else if (requirement !== undefined) summary.experienced.push({ job, requirement });
     else candidates.push(job);
   }
   summary.eligible = candidates.length;

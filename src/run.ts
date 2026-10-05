@@ -2,10 +2,11 @@ import type { Database } from "bun:sqlite";
 import { config } from "./config.ts";
 import { etDay } from "./dates.ts";
 import { getMeta, setAlerted, setMeta } from "./db.ts";
+import { describePending } from "./description.ts";
 import { runFeeds } from "./feeds.ts";
 import type { JobSource } from "./job.ts";
 import type { Log } from "./log.ts";
-import { postPending, type PostSummary } from "./post.ts";
+import { postPending, postWindowStart, type PostSummary } from "./post.ts";
 import { describeSlackError, type SlackPoster } from "./slack.ts";
 
 export interface RunOptions {
@@ -41,6 +42,7 @@ function report(summary: PostSummary, dryRun: boolean, log: Log): void {
     summary.international > 0 ? `${summary.international} international` : "",
     summary.graduate > 0 ? `${summary.graduate} graduate-only` : "",
     summary.highSchool > 0 ? `${summary.highSchool} high-school-only` : "",
+    summary.experienced.length > 0 ? `${summary.experienced.length} needing experience` : "",
   ].filter(Boolean);
   log.info(
     `posting: ${summary.decided} new jobs to consider, ${summary.expired} too old; ` +
@@ -51,6 +53,12 @@ function report(summary: PostSummary, dryRun: boolean, log: Log): void {
       (summary.failed > 0 ? `, ${summary.failed} rejected by Slack` : "") +
       (summary.notUpdated > 0 ? `, ${summary.notUpdated} parents Slack wouldn't update` : ""),
   );
+  // Held jobs come back every run until they expire, so they are only listed for a dry run's check.
+  if (dryRun) {
+    for (const { job, requirement } of summary.experienced) {
+      log.info(`  - needs ${requirement.years} years: ${job.company} · ${job.title} (${job.url})\n      "${requirement.evidence}"`);
+    }
+  }
   if (summary.claimed.length > 0) {
     log.warn(
       `${summary.claimed.length} job(s) may or may not have reached Slack. Check the channel, then run ` +
@@ -84,6 +92,14 @@ export async function runOnce(db: Database, sources: JobSource[], options: RunOp
     setMeta(db, "post_since", postSince);
     log.info(`first run: only jobs posted on or after ${postSince} will be posted`);
   }
+
+  // Outside the dry-run rollback, so postings are read once either way.
+  await describePending(db, {
+    now,
+    since: postWindowStart(now, postSince),
+    postInternational: config.postInternational,
+    log,
+  });
 
   const postOptions = {
     channel,

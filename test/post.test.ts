@@ -1,7 +1,7 @@
 import type { Database } from "bun:sqlite";
 import { WebAPIPlatformError, WebAPIRateLimitedError, WebAPIRequestError } from "@slack/web-api";
 import { beforeEach, describe, expect, test } from "bun:test";
-import { openDb } from "../src/db.ts";
+import { openDb, saveDescription } from "../src/db.ts";
 import { ingest } from "../src/ingest.ts";
 import { markPosted, postPending, requeue, type PostOptions } from "../src/post.ts";
 import type { JobMessage, SlackPoster } from "../src/slack.ts";
@@ -306,6 +306,20 @@ describe("postPending", () => {
     expect(summary).toMatchObject({ highSchool: 1, eligible: 1, posted: 1 });
     expect(poster.calls.map((call) => call.message?.title)).toEqual(["High School or College Software Intern"]);
     expect(states().map((job) => job.post_state)).toEqual(["pending", "posted"]);
+  });
+
+  test("jobs whose posting asks for 2+ years of experience are held back", async () => {
+    const titles = ["Data Analyst", "Data Scientist", "Data Engineer", "Quant Analyst"];
+    ingest(db, simplify, titles.map((title, index) => greenhouse(index + 1, { title })), { complete: false, now: day1 });
+    saveDescription(db, 1, { status: "ok", text: "Requirements\n- 3+ years of experience with SQL" }, day1);
+    saveDescription(db, 2, { status: "ok", text: "Requirements\n- 0-2 years of experience with SQL" }, day1);
+    saveDescription(db, 3, { status: "unavailable" }, day1);
+
+    const poster = fakePoster();
+    const summary = await postPending(db, poster, options(day1));
+    expect(summary).toMatchObject({ eligible: 3, posted: 3 });
+    expect(summary.experienced.map(({ job, requirement }) => [job.id, requirement.years])).toEqual([[1, 3]]);
+    expect(states().map((job) => job.post_state)).toEqual(["pending", "posted", "posted", "posted"]);
   });
 
   test("a job with a US location in any source is posted", async () => {
