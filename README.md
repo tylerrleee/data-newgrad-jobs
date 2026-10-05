@@ -1,4 +1,6 @@
-# jobbo
+# jobbo 
+
+**(Adapted from another repo)**
 
 jobbo collects new-grad data science, data analyst, data engineering and quant listings (for a May 2027 graduate) from a few public job lists and posts each new one to a Slack channel once.
 
@@ -104,4 +106,14 @@ Each post shows the company in bold, the job title as a link to the posting, and
 ```sh
 bun test
 bun run typecheck
+```
+
+
+## Running Service
+```sh
+sudo systemctl daemon-reload
+sudo systemctl enable --now jobbo
+systemctl status jobbo
+journalctl -u jobbo -f
+
 ```
