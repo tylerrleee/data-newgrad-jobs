@@ -1,11 +1,11 @@
 import { canonicalKey, cleanUrl } from "../canonical.ts";
-import { isInternship, isSoftware } from "../classify.ts";
+import { isDataRole, isEntryLevel } from "../classify.ts";
 import { zapplyPostedDay } from "../dates.ts";
 import { get, redirectTarget } from "../http.ts";
 import type { FetchContext, JobSource, Listing } from "../job.ts";
 import { cleanText } from "../text.ts";
 
-export const ZAPPLY_URL = "https://raw.githubusercontent.com/zapplyjobs/Internships-2027/main/README.md";
+export const ZAPPLY_URL = "https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/README.md";
 export const ZAPPLY_LINKS = "https://zapply.jobs/l/d/";
 
 const HEADER = "| Company | Role | Location | Posted | Visa | **Apply** |";
@@ -88,7 +88,7 @@ function storedUrl(ctx: FetchContext, slug: string): string | undefined {
 }
 
 /**
- * zapply lists the newest 100 internships of each of six sections, each linked through a zapply.jobs
+ * zapply lists the newest 100 new-grad jobs of each of six sections, each linked through a zapply.jobs
  * redirect. Each new link is followed once to its employer URL, which is kept in the row's raw text.
  * Its dates are the ATS's current ones, so a Workday repost shows up as a new job.
  */
@@ -127,7 +127,7 @@ export function zapplySource(
   }
 
   return {
-    name: "zapply",
+    name: "zapply-newgrad",
     source: "zapply",
     minIntervalMinutes: 20,
     async fetchListings(ctx) {
@@ -180,8 +180,8 @@ export function zapplySource(
           category: row.section,
           postedDay,
           // The sections are too broad to count: "Software Engineering" holds test and quality engineering.
-          software: isSoftware({ category: null, title: row.title }),
-          internship: isInternship(row.title, target),
+          roleMatch: isDataRole({ category: null, title: row.title }),
+          entryLevel: isEntryLevel(row.title, target),
           active: true,
           raw: JSON.stringify({ row: row.raw, url: target }),
         });

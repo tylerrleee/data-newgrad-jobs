@@ -5,26 +5,26 @@ import { createSlackPoster, type JobMessage } from "./slack.ts";
 const samples: Omit<JobMessage, "sources" | "moreInThread">[] = [
   {
     company: "Jobbo Test Co.",
-    title: "Sample Software Engineer Intern",
-    url: "https://example.com/jobs/sample?team=a&level=intern",
+    title: "Sample Data Analyst - New Grad 2027",
+    url: "https://example.com/jobs/sample?team=a&level=new-grad",
     locations: ["Remote"],
   },
   {
     company: "Northwind Analytics",
-    title: "Data Science Intern (Summer 2027)",
+    title: "Data Scientist I",
     url: "https://example.com/jobs/northwind-data-science",
     locations: ["New York, NY", "Boston, MA"],
   },
   {
     company: "Contoso Robotics",
-    title: "Machine Learning Engineer Intern",
-    url: "https://example.com/jobs/contoso-ml",
+    title: "Associate Data Engineer",
+    url: "https://example.com/jobs/contoso-data-engineering",
     locations: ["Pittsburgh, PA", "San Francisco, CA", "Austin, TX", "Seattle, WA", "Remote"],
   },
   {
     company: "Fabrikam Cloud",
-    title: "Site Reliability Engineering Intern",
-    url: "https://example.com/jobs/fabrikam-sre",
+    title: "Quantitative Researcher",
+    url: "https://example.com/jobs/fabrikam-quant",
     locations: [],
   },
 ];

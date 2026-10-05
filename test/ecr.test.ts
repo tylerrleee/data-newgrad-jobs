@@ -80,8 +80,8 @@ describe("ecrListing", () => {
       locations: ["Seattle, Washington, US"],
       category: "SWE",
       postedDay: "2026-09-24",
-      software: true,
-      internship: true,
+      roleMatch: false,
+      entryLevel: false,
       active: true,
       raw: JSON.stringify(amazon),
     });
@@ -105,20 +105,21 @@ describe("ecrListing", () => {
     });
   });
 
-  test("flags new-grad titles and splits locations", () => {
+  test("keeps new-grad titles as entry level and splits locations", () => {
     expect(listings.get("job_f4b844cc4d77f30c")).toMatchObject({
-      software: true,
-      internship: false,
+      roleMatch: false,
+      entryLevel: true,
       locations: ["San, JOSE"],
     });
     expect(listings.get("job_fdbdd06f57a9f59d")?.locations).toEqual(["Cary, North Carolina, United States", "Cary, NC"]);
   });
 
   test("classifies by track and title", () => {
-    expect(listings.get("job_cdece4455c021f31")).toMatchObject({ category: "Finance", software: false });
-    expect(listings.get("job_869bff1fee6c15a4")).toMatchObject({ category: "ML & AI", software: false });
-    expect(listings.get("job_fdbdd06f57a9f59d")).toMatchObject({ category: "Other", software: true });
-    expect(listings.get("job_00000000fade0001")).toMatchObject({ category: "Robotics", software: true });
+    expect(listings.get("job_cdece4455c021f31")).toMatchObject({ category: "Finance", roleMatch: false });
+    expect(listings.get("job_869bff1fee6c15a4")).toMatchObject({ category: "ML & AI", roleMatch: false });
+    expect(listings.get("job_fdbdd06f57a9f59d")).toMatchObject({ category: "Other", roleMatch: false });
+    expect(listings.get("job_a16a719c77cd89d5")).toMatchObject({ category: "Data", roleMatch: true });
+    expect(listings.get("job_08f3391d7785629e")).toMatchObject({ category: "Data", roleMatch: true });
   });
 
   test("cleans text and keys ECR's internal duplicates alike", () => {
@@ -170,7 +171,7 @@ describe("ecrSource", () => {
       },
     });
     servers.push(server);
-    return { url: new URL("/summer-internships", server.url).href, requests };
+    return { url: new URL("/new-grad", server.url).href, requests };
   }
 
   const ctx: FetchContext = {
@@ -190,13 +191,13 @@ describe("ecrSource", () => {
   test("fetches the board with fixed headers", async () => {
     const { url, requests } = serve(html);
     const source = ecrSource(url, { minJobs: 1 });
-    expect(source).toMatchObject({ name: "ecr", source: "ecr", minIntervalMinutes: 55 });
+    expect(source).toMatchObject({ name: "ecr-newgrad", source: "ecr", minIntervalMinutes: 55 });
     const result = await fetchChanged(source);
     expect(result).toMatchObject({ complete: true, skipped: 0, detail: "live" });
     expect(result.listings).toHaveLength(14);
     expect(result.etag).toBeUndefined();
     expect(requests).toHaveLength(1);
-    expect(requests[0]!.get("user-agent")).toBe("jobbo/0.1 (personal internship alerts)");
+    expect(requests[0]!.get("user-agent")).toBe("jobbo/0.1 (personal new-grad job alerts)");
     expect(requests[0]!.get("accept-encoding")).toBe("br, gzip");
   });
 

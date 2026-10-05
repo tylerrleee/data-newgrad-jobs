@@ -75,8 +75,8 @@ describe("simplifyListing", () => {
       category: "Quant",
       // 1790288051 is 18:14 in New York on the 24th.
       postedDay: "2026-09-24",
-      software: false,
-      internship: true,
+      roleMatch: true,
+      entryLevel: false,
       active: true,
       raw: JSON.stringify(tradeweb),
     });
@@ -117,13 +117,13 @@ describe("simplifyListing", () => {
   });
 
   test("classifies with category and title", () => {
-    const hardware = simplifyListing(record({ category: "Hardware", title: "Embedded Software Intern" }))!;
-    expect(hardware.software).toBe(true);
-    const product = simplifyListing(record({ category: "Product", title: "Product Management Intern" }))!;
-    expect(product.software).toBe(false);
-    const missing = simplifyListing(record({ category: undefined, title: "New Grad Software Engineer" }))!;
+    const quant = simplifyListing(record({ category: "Quant", title: "Trading Analyst" }))!;
+    expect(quant).toMatchObject({ roleMatch: true, entryLevel: true });
+    const product = simplifyListing(record({ category: "Product", title: "Product Manager - New Grad" }))!;
+    expect(product.roleMatch).toBe(false);
+    const missing = simplifyListing(record({ category: undefined, title: "Data Science Intern" }))!;
     expect(missing.category).toBeNull();
-    expect(missing.internship).toBe(false);
+    expect(missing).toMatchObject({ roleMatch: true, entryLevel: false });
   });
 
   test("keeps the record verbatim as raw and ignores terms", () => {
@@ -239,7 +239,7 @@ beforeEach(() => {
 describe("simplifySource", () => {
   test("has the feed settings", () => {
     const source = simplifySource(URL_);
-    expect(source.name).toBe("simplify");
+    expect(source.name).toBe("simplify-newgrad");
     expect(source.source).toBe("simplify");
     expect(source.minIntervalMinutes).toBe(20);
   });

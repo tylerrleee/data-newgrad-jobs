@@ -60,14 +60,14 @@ export function ingest(
   );
   const upsert = db.query(
     `INSERT INTO listings (feed, source, source_id, job_id, key, url, company, title, locations, category,
-                           posted_day, software, internship, active, first_seen_at, last_seen_at, raw)
+                           posted_day, role_match, entry_level, active, first_seen_at, last_seen_at, raw)
      VALUES ($feed, $source, $sourceId, $jobId, $key, $url, $company, $title, $locations, $category,
-             $postedDay, $software, $internship, $active, $now, $now, $raw)
+             $postedDay, $roleMatch, $entryLevel, $active, $now, $now, $raw)
      ON CONFLICT (feed, source_id) DO UPDATE SET
        key = excluded.key, url = excluded.url, company = excluded.company, title = excluded.title,
        locations = excluded.locations, category = excluded.category,
        posted_day = min(posted_day, excluded.posted_day),
-       software = excluded.software, internship = excluded.internship, active = excluded.active,
+       role_match = excluded.role_match, entry_level = excluded.entry_level, active = excluded.active,
        last_seen_at = excluded.last_seen_at, raw = excluded.raw`,
   );
 
@@ -82,7 +82,7 @@ export function ingest(
       locations: JSON.stringify(listing.locations),
       sources: JSON.stringify([feed.source]),
       postedDay: listing.postedDay,
-      relevant: listing.software && listing.internship ? 1 : 0,
+      relevant: listing.roleMatch && listing.entryLevel ? 1 : 0,
       active: listing.active ? 1 : 0,
       now,
     })!.id;
@@ -116,8 +116,8 @@ export function ingest(
       locations: JSON.stringify(listing.locations),
       category: listing.category,
       postedDay: listing.postedDay,
-      software: listing.software ? 1 : 0,
-      internship: listing.internship ? 1 : 0,
+      roleMatch: listing.roleMatch ? 1 : 0,
+      entryLevel: listing.entryLevel ? 1 : 0,
       active: listing.active ? 1 : 0,
       now,
       raw: listing.raw,
@@ -158,8 +158,8 @@ interface ListingRow {
   title: string;
   locations: string;
   posted_day: string;
-  software: number;
-  internship: number;
+  role_match: number;
+  entry_level: number;
   active: number;
   first_seen_at: string;
 }
@@ -168,7 +168,7 @@ interface ListingRow {
 export function refreshJob(db: Database, jobId: number): void {
   const rows = db
     .query<ListingRow, { jobId: number }>(
-      `SELECT source, url, company, title, locations, posted_day, software, internship, active, first_seen_at
+      `SELECT source, url, company, title, locations, posted_day, role_match, entry_level, active, first_seen_at
        FROM listings WHERE job_id = $jobId ORDER BY first_seen_at, id`,
     )
     .all({ jobId });
@@ -201,7 +201,7 @@ export function refreshJob(db: Database, jobId: number): void {
     sources: JSON.stringify([...new Set(rows.map((row) => row.source))]),
     postedDay: days[0]!,
     lastPostedDay: days.at(-1)!,
-    relevant: rows.some((row) => row.software) && rows.every((row) => row.internship) ? 1 : 0,
+    relevant: rows.some((row) => row.role_match) && rows.every((row) => row.entry_level) ? 1 : 0,
     active: rows.some((row) => row.active) ? 1 : 0,
   });
 }

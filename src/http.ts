@@ -1,4 +1,4 @@
-export const USER_AGENT = "jobbo/0.1 (personal internship alerts)";
+export const USER_AGENT = "jobbo/0.1 (personal new-grad job alerts)";
 const MAX_REDIRECTS = 5;
 
 export class HttpError extends Error {

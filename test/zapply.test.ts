@@ -128,8 +128,8 @@ describe("zapplySource", () => {
       locations: ["Torrance, CA"],
       category: "Software Engineering",
       postedDay: "2026-09-29",
-      software: true,
-      internship: true,
+      roleMatch: false,
+      entryLevel: false,
       active: true,
       raw: JSON.stringify({ row: README.split("\n").find((line) => line.includes(MOOG)), url: MOOG_URL }),
     });
@@ -159,12 +159,12 @@ describe("zapplySource", () => {
     expect(days["D. E. Shaw"]).toBeUndefined();
   });
 
-  test("only the title decides software, since the sections are broad", async () => {
-    const software = Object.fromEntries(
-      listingsOf(await feed("/README.md").fetchListings(context())).map((listing) => [listing.company, listing.software]),
+  test("only the title decides the role, since the sections are broad", async () => {
+    const roleMatch = Object.fromEntries(
+      listingsOf(await feed("/README.md").fetchListings(context())).map((listing) => [listing.company, listing.roleMatch]),
     );
-    // Nike's "Systems Engineer Graduate Internship" is in the Software Engineering section.
-    expect(software).toMatchObject({ Waymo: true, Hermeus: true, Moog: true, Nike: false, Moderna: false });
+    // Moderna's "Co-Op, Bioanalytics" is in the Data Science & AI section.
+    expect(roleMatch).toMatchObject({ Symbotic: true, onsemi: true, Moderna: false, Waymo: false, Moog: false });
   });
 
   test("a link back to zapply's own pages leads to no job, and is not followed again", async () => {

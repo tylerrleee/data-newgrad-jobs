@@ -1,28 +1,27 @@
 # jobbo
 
-jobbo collects new software internship listings from a few public job lists and posts each new one to a Slack channel once.
+jobbo collects new-grad data science, data analyst, data engineering and quant listings (for a May 2027 graduate) from a few public job lists and posts each new one to a Slack channel once.
 
 Each run does these steps:
 
 1. It gets the sources that are due, using as few requests as possible (ETags, and a byte range for Simplify's large JSON file).
-2. It keeps software internships only. Rules in `src/classify.ts` remove new-grad, full-time and non-software roles.
+2. It keeps entry-level data roles only. Rules in `src/classify.ts` remove internships and co-ops, senior roles ("Senior", "Lead", "Data Engineer II"), titles that name only a year before 2027 ("2026 New Grad"), data gig work (labeling, collection) and roles that aren't data science, analytics, data engineering or quant. Plain software and ML engineering roles are not posted.
 3. It finds the same job in different sources by the job ID in its apply URL (Greenhouse, Workday, Lever, Ashby, iCIMS and others), so each job is stored once.
-4. It does not post jobs that are only outside the US (see `src/region.ts`). A job with at least one US location is posted. A job whose location is not clear, for example "Remote", is also posted. A job title that names a place outside the US, for example "Software Engineering Internship - Ireland", counts as a location outside the US.
-5. It does not post internships that are only for graduate students, for example "PhD Intern" or "Intern, MS/PhD" (see `src/degree.ts`). If a job title names a degree level, the titles decide. If not, Simplify's degrees and ECR's student years decide. A job that lets undergraduates apply in any source is posted. A job with no degree information is also posted. By the same rules, it does not post internships that are only for high school students, for example "High School Internship, Software Engineering". "High School or College Intern" is posted.
+4. It does not post jobs that are only outside the US (see `src/region.ts`). A job with at least one US location is posted. A job whose location is not clear, for example "Remote", is also posted. A job title that names a place outside the US, for example "Data Analyst - Ireland", counts as a location outside the US.
+5. It does not post jobs that are only for people with a graduate degree, for example "Data Scientist, PhD" or "Quant Researcher (MS/PhD)" (see `src/degree.ts`). "Graduate" alone, as in "Graduate Data Engineer", means a new graduate and is posted. If a job title names a degree level, the titles decide. If not, Simplify's degrees and ECR's student years decide. A job that lets bachelor's graduates apply in any source is posted. A job with no degree information is also posted. By the same rules, it does not post jobs that are only for high school students.
 6. It posts each new job to Slack once. Jobs posted before the day of the first run are never posted, and no job older than 7 days is posted. Openings with the same company and title, posted within 3 days of each other, go into one thread.
 
 ## Sources
 
 | Source | What jobbo reads | Checked at most every |
 |---|---|---|
-| [Early Career Radar](https://earlycareerradar.com/summer-internships) | The summer internships page | 55 minutes |
-| [SimplifyJobs/Summer2027-Internships](https://github.com/SimplifyJobs/Summer2027-Internships) | [`listings.json`](https://raw.githubusercontent.com/SimplifyJobs/Summer2027-Internships/dev/.github/scripts/listings.json) on the `dev` branch | 20 minutes |
-| [speedyapply/2027-SWE-College-Jobs](https://github.com/speedyapply/2027-SWE-College-Jobs) | [US](https://raw.githubusercontent.com/speedyapply/2027-SWE-College-Jobs/main/README.md) and [international](https://raw.githubusercontent.com/speedyapply/2027-SWE-College-Jobs/main/INTERN_INTL.md) internship tables | 20 minutes |
-| [speedyapply/2027-AI-College-Jobs](https://github.com/speedyapply/2027-AI-College-Jobs) | [US](https://raw.githubusercontent.com/speedyapply/2027-AI-College-Jobs/main/README.md) and [international](https://raw.githubusercontent.com/speedyapply/2027-AI-College-Jobs/main/INTERN_INTL.md) internship tables | 20 minutes |
-| [zshah101/Automated-List-Of-Summer-2027-and-Fall-2026-Tech-Internships](https://github.com/zshah101/Automated-List-Of-Summer-2027-and-Fall-2026-Tech-Internships) | [`data/jobs.json`](https://raw.githubusercontent.com/zshah101/Automated-List-Of-Summer-2027-and-Fall-2026-Tech-Internships/main/data/jobs.json), every job it has found, open or closed | 20 minutes |
-| [zapplyjobs/Internships-2027](https://github.com/zapplyjobs/Internships-2027) | The [README](https://raw.githubusercontent.com/zapplyjobs/Internships-2027/main/README.md) tables: the newest 100 internships of each section | 20 minutes |
+| [Early Career Radar](https://earlycareerradar.com/new-grad) | The new-grad page | 55 minutes |
+| [SimplifyJobs/New-Grad-Positions](https://github.com/SimplifyJobs/New-Grad-Positions) | [`listings.json`](https://raw.githubusercontent.com/SimplifyJobs/New-Grad-Positions/dev/.github/scripts/listings.json) on the `dev` branch | 20 minutes |
+| [speedyapply/2027-AI-College-Jobs](https://github.com/speedyapply/2027-AI-College-Jobs) | The [US new-grad table](https://raw.githubusercontent.com/speedyapply/2027-AI-College-Jobs/main/NEW_GRAD_USA.md) | 20 minutes |
+| [speedyapply/2027-SWE-College-Jobs](https://github.com/speedyapply/2027-SWE-College-Jobs) | The [US new-grad table](https://raw.githubusercontent.com/speedyapply/2027-SWE-College-Jobs/main/NEW_GRAD_USA.md), for the data roles in it | 20 minutes |
+| [zapplyjobs/New-Grad-Jobs-2027](https://github.com/zapplyjobs/New-Grad-Jobs-2027) | The [README](https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/README.md) tables: the newest 100 jobs of each section | 20 minutes |
 
-zshah101 and zapply get their jobs from the employers' ATS boards, so they often list jobs hours before the other sources. They also list jobs that the other sources don't have.
+zapply gets its jobs from the employers' ATS boards, so it often lists jobs hours before the other sources. It also lists jobs that the other sources don't have. (`src/sources/zshah.ts` reads zshah101's internship list; it is no longer wired in, since zshah101 has no new-grad list.)
 
 Each zapply link goes through a zapply.jobs redirect. jobbo follows each new link one time to find the employer URL, and then stores it. It follows at most 150 new links per run. zapply gives each job the date that the ATS shows now, so a job that an employer posts again appears as a new job.
 

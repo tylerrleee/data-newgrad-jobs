@@ -1,5 +1,5 @@
 import { canonicalKey, cleanUrl } from "../canonical.ts";
-import { isInternship, isSoftware } from "../classify.ts";
+import { isDataRole, isEntryLevel } from "../classify.ts";
 import { speedyapplyPostedDay } from "../dates.ts";
 import { get } from "../http.ts";
 import type { JobSource, Listing } from "../job.ts";
@@ -55,8 +55,8 @@ function parseRow(row: string, columns: number, fetchedAt: Date, category: Categ
     locations: location ? [location] : [],
     category,
     postedDay,
-    software: isSoftware({ category, title }),
-    internship: isInternship(title, url),
+    roleMatch: isDataRole({ category, title }),
+    entryLevel: isEntryLevel(title, url),
     active: true,
     raw: row,
   };
@@ -130,9 +130,8 @@ const BASE = "https://raw.githubusercontent.com/speedyapply";
 
 export function speedyapplySources(): JobSource[] {
   return [
-    speedyapplySource("speedyapply-swe-us", `${BASE}/2027-SWE-College-Jobs/main/README.md`, "swe"),
-    speedyapplySource("speedyapply-swe-intl", `${BASE}/2027-SWE-College-Jobs/main/INTERN_INTL.md`, "swe"),
-    speedyapplySource("speedyapply-ai-us", `${BASE}/2027-AI-College-Jobs/main/README.md`, "ai"),
-    speedyapplySource("speedyapply-ai-intl", `${BASE}/2027-AI-College-Jobs/main/INTERN_INTL.md`, "ai"),
+    speedyapplySource("speedyapply-ai-newgrad-us", `${BASE}/2027-AI-College-Jobs/main/NEW_GRAD_USA.md`, "ai"),
+    // Data titles turn up in the SWE list too; isDataRole picks them out.
+    speedyapplySource("speedyapply-swe-newgrad-us", `${BASE}/2027-SWE-College-Jobs/main/NEW_GRAD_USA.md`, "swe"),
   ];
 }

@@ -1,12 +1,12 @@
 import { canonicalKey, cleanUrl } from "../canonical.ts";
-import { isInternship, isSoftware } from "../classify.ts";
+import { isDataRole, isEntryLevel } from "../classify.ts";
 import { simplifyPostedDay } from "../dates.ts";
 import { get, RangeIgnoredError } from "../http.ts";
 import type { FetchContext, FetchResult, JobSource, Listing } from "../job.ts";
 import { cleanText } from "../text.ts";
 
 export const SIMPLIFY_URL =
-  "https://raw.githubusercontent.com/SimplifyJobs/Summer2027-Internships/dev/.github/scripts/listings.json";
+  "https://raw.githubusercontent.com/SimplifyJobs/New-Grad-Positions/dev/.github/scripts/listings.json";
 
 const HOUR_MS = 3_600_000;
 const DAY_MS = 24 * HOUR_MS;
@@ -65,8 +65,8 @@ export function simplifyListing(record: unknown): Listing | undefined {
     locations: Array.isArray(fields.locations) ? fields.locations.map(place).filter(Boolean) : [],
     category,
     postedDay,
-    software: isSoftware({ category, title }),
-    internship: isInternship(title, url),
+    roleMatch: isDataRole({ category, title }),
+    entryLevel: isEntryLevel(title, url),
     active: fields.active === true && fields.is_visible === true,
     raw: JSON.stringify(record),
   };
@@ -154,7 +154,7 @@ export function simplifySource(
   }
 
   return {
-    name: "simplify",
+    name: "simplify-newgrad",
     source: "simplify",
     minIntervalMinutes: 20,
     fetchListings: (ctx) => (needsFull(ctx) ? fetchFull("full") : fetchTail(ctx)),

@@ -2,19 +2,19 @@ import type { SourceName } from "./job.ts";
 
 /**
  * Who can apply: only graduate students (Master's, PhD, MBA), only high school students,
- * undergraduates (maybe with others too), or not clear. jobbo is for undergraduates, so it holds
- * back graduate-only and high-school-only jobs.
+ * undergraduates (maybe with others too), or not clear. jobbo is for a bachelor's graduate, so it
+ * holds back graduate-only and high-school-only jobs.
  */
 export type Level = "graduate" | "high school" | "undergraduate" | "unknown";
 
 // "BS/MS", "UG/MS" and "Bachelor's or Master's" let undergraduates apply. The codes are case-sensitive.
 const UNDERGRADUATE_TITLE = /\b(undergrad\w*|bachelor\w*)\b/i;
 const UNDERGRADUATE_CODE = /\b(B\.?Sc?|UG)\b/;
-// "Graduate Intern" is a graduate student in the US, and elsewhere a graduate, who isn't a student
-// either. Not "Master Data" (master data management), "Scrum Master", "New Grad", "Intern/Graduate"
-// (an intern or a graduate) or "grad 2028" (a graduation year).
+// On a new-grad list "Graduate" alone ("Graduate Data Engineer", "Graduate Leadership Program")
+// means a new graduate, so only a named graduate degree or a graduate student counts. Not "Master
+// Data" (master data management) or "Scrum Master".
 const GRADUATE_TITLE =
-  /\b(ph\.? ?d|doctora(l|te)|doctor of philosophy|post[- ]?doc\w*|postgrad\w*|mba)\b|(?<!\bscrum[\s-]*)\bmasters?\b(?![\s-]+data\b)|(?<!\b(new|recent|university|college)[\s-]+|\binterns? ?\/ ?)\bgrad(uate)?\b(?![\s-]+'?(20)?\d\d\b)/i;
+  /\b(ph\.? ?d|doctora(l|te)|doctor of philosophy|post[- ]?doc\w*|post[- ]?grad\w*|mba|grad(uate)?[\s-]+(students?|level|research|teaching))\b|(?<!\bscrum[\s-]*)\bmasters?\b(?![\s-]+data\b)/i;
 // "High School Internship, Software Engineering", "Innovation Developer - High School Student".
 // "High School or College Intern" also lets undergraduates apply. Not "HS", which is often another word.
 const HIGH_SCHOOL_TITLE = /\b(high[- ]?school|secondary school)\b/i;

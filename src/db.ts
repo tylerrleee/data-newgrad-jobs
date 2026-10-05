@@ -58,8 +58,8 @@ const SCHEMA = `
     locations TEXT NOT NULL,
     category TEXT,
     posted_day TEXT NOT NULL,
-    software INTEGER NOT NULL,
-    internship INTEGER NOT NULL,
+    role_match INTEGER NOT NULL,
+    entry_level INTEGER NOT NULL,
     active INTEGER NOT NULL,
     first_seen_at TEXT NOT NULL,
     last_seen_at TEXT NOT NULL,
@@ -82,9 +82,26 @@ export function openDb(path: string): Database {
   db.run("PRAGMA busy_timeout = 5000");
   db.run("PRAGMA foreign_keys = ON");
   db.run(SCHEMA);
-  db.run("PRAGMA user_version = 1");
+  migrateToNewGrad(db);
+  db.run("PRAGMA user_version = 2");
   rekeyIfCanonicalChanged(db);
   return db;
+}
+
+/**
+ * Version 1 tracked software internships in `software` and `internship`. Those listings come from
+ * the internship feeds, which are no longer read, so they match nothing now and their unposted
+ * jobs are never posted.
+ */
+function migrateToNewGrad(db: Database): void {
+  const columns = db.query<{ name: string }, []>("SELECT name FROM pragma_table_info('listings')").all();
+  if (!columns.some((column) => column.name === "software")) return;
+  db.transaction(() => {
+    db.run("ALTER TABLE listings RENAME COLUMN software TO role_match");
+    db.run("ALTER TABLE listings RENAME COLUMN internship TO entry_level");
+    db.run("UPDATE listings SET role_match = 0, entry_level = 0");
+    db.run("UPDATE jobs SET relevant = 0 WHERE post_state IN ('new', 'pending')");
+  })();
 }
 
 export function getMeta(db: Database, key: string): string | undefined {

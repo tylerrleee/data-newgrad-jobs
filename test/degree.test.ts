@@ -27,14 +27,26 @@ describe("titleLevel", () => {
         "AI Solutions & Value MBA Intern",
         "Postdoctoral Researcher Intern - Foundational AI: Theory and Architectures",
         "Post Grad Data Science Intern",
-        "Graduate Intern - Artificial Intelligence & Data Science - Summer 2027",
-        "Grad Intern - Software Engineer - Amgen’s Technology & Medical Organizations - Summer 2027",
         "Software Engineering Graduate Student Intern",
-        "Summer 2027 Software Developer Internship - Graduate",
         "Data Engineering Intern – Graduate Level",
         "Graduate Research Assistant",
+        "Data Scientist, PhD",
+        "Quantitative Researcher (MS/PhD)",
       ],
       "graduate",
+    );
+  });
+
+  test("'Graduate' alone means a new graduate", () => {
+    expectTitles(
+      [
+        "Graduate Data Engineer",
+        "Data Scientist Graduate - Multimedia",
+        "Graduate Leadership Program - Data Analytics",
+        "Multi-Cloud CDN Data Platform Engineer Graduate - CDN Platform",
+        "Technology Graduate Program - Technology, Data and Innovation",
+      ],
+      "unknown",
     );
   });
 

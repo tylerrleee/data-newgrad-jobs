@@ -69,7 +69,7 @@ describe("postPending", () => {
     ingest(db, simplify, [
       greenhouse(1, { postedDay: "2026-09-24" }),
       greenhouse(2, { postedDay: "2026-09-10", title: "Old Intern" }),
-      greenhouse(3, { postedDay: "2026-09-24", software: false, title: "Marketing Intern" }),
+      greenhouse(3, { postedDay: "2026-09-24", roleMatch: false, title: "Marketing Intern" }),
     ], { complete: false, now: day1 });
 
     const poster = fakePoster();
@@ -245,8 +245,8 @@ describe("postPending", () => {
     expect(states()[0]!.post_state).toBe("pending");
   });
 
-  test("inactive and non-internship jobs are not posted", async () => {
-    ingest(db, simplify, [greenhouse(1, { active: false }), greenhouse(2, { internship: false })], {
+  test("inactive and non-entry-level jobs are not posted", async () => {
+    ingest(db, simplify, [greenhouse(1, { active: false }), greenhouse(2, { entryLevel: false })], {
       complete: false,
       now: day1,
     });

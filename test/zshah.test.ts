@@ -27,8 +27,8 @@ describe("zshahListing", () => {
       locations: ["Westminster, CO"],
       category: "Software",
       postedDay: "2026-08-24",
-      software: true,
-      internship: true,
+      roleMatch: false,
+      entryLevel: false,
       active: true,
       raw: JSON.stringify(raw),
     });
@@ -49,9 +49,9 @@ describe("zshahListing", () => {
   });
 
   test("classifies by category and title", () => {
-    expect(zshahListing(record(HADRIAN))).toMatchObject({ category: "Data & ML/AI", software: true });
-    expect(zshahListing(record(APPIAN))).toMatchObject({ category: "Security", software: true });
-    expect(zshahListing(record(HADRIAN, { title: "Sustainability Intern" }))!.software).toBe(false);
+    expect(zshahListing(record(HADRIAN))).toMatchObject({ category: "Data & ML/AI", roleMatch: true });
+    expect(zshahListing(record(APPIAN))).toMatchObject({ category: "Security", roleMatch: false });
+    expect(zshahListing(record(HADRIAN, { title: "Sustainability Intern" }))!.roleMatch).toBe(false);
   });
 
   test("skips records without an id, usable url or date", () => {

@@ -1,11 +1,11 @@
 import { canonicalKey, cleanUrl } from "../canonical.ts";
-import { isInternship, isSoftware } from "../classify.ts";
+import { isDataRole, isEntryLevel } from "../classify.ts";
 import { ecrPostedDay } from "../dates.ts";
 import { get } from "../http.ts";
 import type { FetchResult, JobSource, Listing } from "../job.ts";
 import { cleanText } from "../text.ts";
 
-export const ECR_URL = "https://earlycareerradar.com/summer-internships";
+export const ECR_URL = "https://earlycareerradar.com/new-grad";
 
 const JOBS = '"initialJobs":[';
 const DATA_STATE = /"initialDataState":"(\w+)"/;
@@ -87,17 +87,17 @@ export function ecrListing(job: unknown): Listing | undefined {
       .filter((location) => location && !/^\d+ locations?$/i.test(location)),
     category,
     postedDay,
-    software: isSoftware({ category, title }),
-    internship: isInternship(title, url),
+    roleMatch: isDataRole({ category, title }),
+    entryLevel: isEntryLevel(title, url),
     active: job.closed !== true,
     raw: JSON.stringify(job),
   };
 }
 
-/** The whole summer board in one page; ECR sends no ETag, so every run downloads it. */
-export function ecrSource(url = ECR_URL, { minJobs = 1000 }: { minJobs?: number } = {}): JobSource {
+/** The whole new-grad board in one page; ECR sends no ETag, so every run downloads it. */
+export function ecrSource(url = ECR_URL, { minJobs = 300 }: { minJobs?: number } = {}): JobSource {
   return {
-    name: "ecr",
+    name: "ecr-newgrad",
     source: "ecr",
     minIntervalMinutes: 55,
     async fetchListings(): Promise<FetchResult> {

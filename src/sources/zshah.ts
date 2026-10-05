@@ -1,5 +1,5 @@
 import { canonicalKey, cleanUrl } from "../canonical.ts";
-import { isInternship, isSoftware } from "../classify.ts";
+import { isDataRole, isEntryLevel } from "../classify.ts";
 import { zshahPostedDay } from "../dates.ts";
 import { get } from "../http.ts";
 import type { JobSource, Listing } from "../job.ts";
@@ -36,8 +36,8 @@ export function zshahListing(record: unknown): Listing | undefined {
     locations: location ? [location] : [],
     category,
     postedDay,
-    software: isSoftware({ category, title }),
-    internship: isInternship(title, url),
+    roleMatch: isDataRole({ category, title }),
+    entryLevel: isEntryLevel(title, url),
     active: record.is_open === true,
     raw: JSON.stringify(record),
   };

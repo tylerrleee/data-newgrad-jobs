@@ -33,8 +33,10 @@ export interface Listing {
   category: string | null;
   /** YYYY-MM-DD, America/New_York. */
   postedDay: string;
-  software: boolean;
-  internship: boolean;
+  /** A data science, analysis, engineering or quant role (classify.ts isDataRole). */
+  roleMatch: boolean;
+  /** Open to a new graduate: not an internship or a senior role (classify.ts isEntryLevel). */
+  entryLevel: boolean;
   active: boolean;
   raw: string;
 }

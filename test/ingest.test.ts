@@ -195,14 +195,14 @@ describe("ingest", () => {
     expect(jobs()).toHaveLength(2);
   });
 
-  test("relevance needs a software listing and no new-grad listing", () => {
+  test("relevance needs a data-role listing and only entry-level listings", () => {
     ingest(db, simplify, [
-      listing({ sourceId: "s1", url: "https://job-boards.greenhouse.io/acme/jobs/1", software: false }),
-      listing({ sourceId: "s2", url: "https://job-boards.greenhouse.io/acme/jobs/2", software: false }),
+      listing({ sourceId: "s1", url: "https://job-boards.greenhouse.io/acme/jobs/1", roleMatch: false }),
+      listing({ sourceId: "s2", url: "https://job-boards.greenhouse.io/acme/jobs/2", roleMatch: false }),
     ], { complete: false, now });
     ingest(db, ecr, [
       listing({ sourceId: "e1", url: "https://job-boards.greenhouse.io/acme/jobs/1" }),
-      listing({ sourceId: "e2", url: "https://job-boards.greenhouse.io/acme/jobs/2", internship: false }),
+      listing({ sourceId: "e2", url: "https://job-boards.greenhouse.io/acme/jobs/2", entryLevel: false }),
     ], { complete: false, now });
     expect(jobs().map((job) => job.relevant)).toEqual([1, 0]);
   });

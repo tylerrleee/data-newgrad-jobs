@@ -34,8 +34,8 @@ describe("parseSpeedyapply", () => {
       locations: ["New York City, NY"],
       category: "swe",
       postedDay: "2026-09-24",
-      software: true,
-      internship: true,
+      roleMatch: false,
+      entryLevel: false,
       active: true,
       raw: README.split("\n").find((line) => line.includes(url))!,
     });
@@ -63,7 +63,7 @@ describe("parseSpeedyapply", () => {
   });
 
   test("keeps & raw in titles and URLs", () => {
-    expect(only(listings, "Box")).toMatchObject({ title: "Cloud & AI Finance Intern", software: false });
+    expect(only(listings, "Box")).toMatchObject({ title: "Cloud & AI Finance Intern", roleMatch: false });
     expect(only(listings, "Gemini").url).toBe(
       "https://boards.greenhouse.io/embed/job_app?for=gemini&token=8214272&gh_jid=8214272",
     );
@@ -108,7 +108,7 @@ describe("parseSpeedyapply", () => {
   });
 
   test("classifies titles", () => {
-    expect(only(listings, "Northwind")).toMatchObject({ software: true, internship: false });
+    expect(only(listings, "Northwind")).toMatchObject({ roleMatch: false, entryLevel: true });
     expect(parseSpeedyapply(INTL, AFTERNOON, "ai").listings.every((listing) => listing.category === "ai")).toBe(true);
   });
 
@@ -219,13 +219,8 @@ describe("speedyapplySource", () => {
   });
 });
 
-test("speedyapplySources lists the four internship files", () => {
+test("speedyapplySources lists the two US new-grad files", () => {
   const sources = speedyapplySources();
-  expect(sources.map((source) => source.name)).toEqual([
-    "speedyapply-swe-us",
-    "speedyapply-swe-intl",
-    "speedyapply-ai-us",
-    "speedyapply-ai-intl",
-  ]);
+  expect(sources.map((source) => source.name)).toEqual(["speedyapply-ai-newgrad-us", "speedyapply-swe-newgrad-us"]);
   expect(sources.every((source) => source.source === "speedyapply" && source.minIntervalMinutes === 20)).toBe(true);
 });
